@@ -1,0 +1,13 @@
+pandas
+numpy
+scipy
+
+xxhash==1.4.3
+bitarray==1.2.1
+ngram==3.3.2
+
+seaborn==0.11.2
+tqdm==4.46.0
+
+scikit-learn>=0.22.1
+
