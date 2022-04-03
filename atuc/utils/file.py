@@ -52,9 +52,9 @@ def load_data(context_s,context_t,
     target_ = open_ds(t_file,n_atts='atts-'+str(att_t),deduplica=dedup_t)
 
     log_ = {'source':context_s[:-1],
-            'src_len':zfile_s.split('_')[2],
+            'src_len':s_file.split('_')[2],
             'target':context_t[:-1],
-            'tgt_len':zfile_t.split('_')[2],
+            'tgt_len':t_file.split('_')[2],
             'atts_source':att_s,'atts_target':att_t}
 
     return source_,target_,log_
