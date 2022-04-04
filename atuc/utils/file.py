@@ -7,6 +7,7 @@
 @Contact :   thiagonobrega@gmail.com
 '''
 
+import os
 import pandas as pd
 import zipfile
 
@@ -45,8 +46,10 @@ def load_data(context_s,context_t,
               dedup_s=False,dedup_t=False,
              ds_dir="../datasets/"):
 
-    s_file = s_compfile
-    t_file = t_compfile
+
+
+    s_file = ds_dir + os.sep + context_s +os.sep+ s_compfile
+    t_file = ds_dir + os.sep + context_s +os.sep+ t_compfile
 
     source_ = open_ds(s_file,n_atts='atts-'+str(att_s),deduplica=dedup_s)
     target_ = open_ds(t_file,n_atts='atts-'+str(att_t),deduplica=dedup_t)
