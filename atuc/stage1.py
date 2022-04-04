@@ -84,8 +84,9 @@ def s1_selectData2Train(modelo, s, lambada_corte=.51, atributos=[2, 3, 4, 5], co
     '''
         Seleciona os dados para treinarem o classificador target
 
-        @return dados que serao utilizados pas1_trainDSClassifierra o modelo com o gabarito [x1,...,xn,y]
+        @return dados que serao utilizados pas1_trainDSClassifierra o modelo com o gabarito [dice,jaccard,overlap,hamming,entropy,is_match,pp]
         @return pesos que devam ser dados aos pares de entidades
+
     '''
 
     pp = modelo.predict_proba(s.iloc[:, 2:(2 + len(atributos))])

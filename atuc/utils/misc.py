@@ -46,7 +46,7 @@ def ajustar_treino(dfg, length_matches, p=0.01):
     :param dfg:
     :param length_matches:
     :param p:
-    :return:
+    :return: a dataframe with the features [dice,jaccard,overlap,hamming,entropy,is_match], and their weights
     '''
     s_um = calcularTamanho(length_matches, p)
     # sort
