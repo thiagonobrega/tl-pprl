@@ -44,7 +44,7 @@ def load_data(context_s,context_t,
               s_compfile,t_compfile,
               att_s,att_t,
               dedup_s=False,dedup_t=False,
-             ds_dir="../datasets/"):
+             ds_dir="./datasets/"):
 
 
 
