@@ -392,7 +392,7 @@ def load_data_set(data_set_name, attr_num_list, ent_id_col, soundex_attr_val_lis
     #
     ent_id = rec_val_list[ent_id_col].strip().lower()
   
-    for attr_num in xrange(max_attr_num):
+    for attr_num in range(max_attr_num):
 
       if attr_num in attr_num_list:
         use_rec_val_list.append(rec_val_list[attr_num].lower().strip())
