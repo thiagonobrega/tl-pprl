@@ -416,12 +416,12 @@ def load_data_set(data_set_name, attr_num_list, ent_id_col, soundex_attr_val_lis
   # Get the frequency distribution of values
   #
   rec_tuple_count_dict = {}
-  for use_rec_val_list in rec_attr_val_dict.itervalues():
+  for use_rec_val_list in rec_attr_val_dict.values():
     rec_tuple = tuple(use_rec_val_list)
     rec_tuple_count_dict[rec_tuple] = \
                        rec_tuple_count_dict.get(rec_tuple, 0) + 1
   count_dist_dict = {}
-  for rec_tuple_count in rec_tuple_count_dict.itervalues():
+  for rec_tuple_count in rec_tuple_count_dict.values():
     count_dist_dict[rec_tuple_count] = \
                        count_dist_dict.get(rec_tuple_count, 0) + 1
 
