@@ -7,6 +7,7 @@
 @Contact :   thiagonobrega@gmail.com
 '''
 
+import os
 import pandas as pd
 import zipfile
 
@@ -43,18 +44,45 @@ def load_data(context_s,context_t,
               s_compfile,t_compfile,
               att_s,att_t,
               dedup_s=False,dedup_t=False,
-             ds_dir="../datasets/"):
+             ds_dir="./datasets/"):
 
-    s_file = s_compfile
-    t_file = t_compfile
+
+
+    s_file = ds_dir + os.sep + context_s +os.sep+ s_compfile
+    t_file = ds_dir + os.sep + context_t +os.sep+ t_compfile
 
     source_ = open_ds(s_file,n_atts='atts-'+str(att_s),deduplica=dedup_s)
     target_ = open_ds(t_file,n_atts='atts-'+str(att_t),deduplica=dedup_t)
 
     log_ = {'source':context_s[:-1],
-            'src_len':zfile_s.split('_')[2],
+            'src_len':s_file.split('_')[2],
             'target':context_t[:-1],
-            'tgt_len':zfile_t.split('_')[2],
+            'tgt_len':t_file.split('_')[2],
             'atts_source':att_s,'atts_target':att_t}
 
     return source_,target_,log_
+
+def write_results_2_google(df, google_auth,
+                  spreadsheetId='invalid_id',
+                  sheetName = 'Sheet1'):
+  
+  """
+  Colab only
+  usage:
+    auth.authenticate_user()
+    creds, _ = default()
+    gc = gspread.authorize(creds) #google_auth
+
+    write_results_2_google(df,gc)
+  """
+  
+  from google.colab import auth
+  import gspread
+  from google.auth import default
+
+  sh = google_auth.open_by_key(spreadsheetId)
+  sheet = sh.worksheet(sheetName)
+
+  values = df.values.tolist()
+  #append_row
+  sh.values_append(sheetName, {'valueInputOption': 'USER_ENTERED'}, {'values': values})

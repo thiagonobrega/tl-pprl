@@ -13,10 +13,6 @@ import numpy as np
 import pandas as pd
 from sklearn.metrics import precision_score , recall_score , f1_score , accuracy_score
 
-from sklearn.model_selection import train_test_split
-from sklearn.linear_model import LogisticRegression
-from tqdm.notebook import trange , tqdm
-
 
 def showPredictionsSummary(Y):
     '''
@@ -50,7 +46,7 @@ def ajustar_treino(dfg, length_matches, p=0.01):
     :param dfg:
     :param length_matches:
     :param p:
-    :return:
+    :return: a dataframe with the features [dice,jaccard,overlap,hamming,entropy,is_match], and their weights
     '''
     s_um = calcularTamanho(length_matches, p)
     # sort
