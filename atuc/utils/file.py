@@ -61,3 +61,28 @@ def load_data(context_s,context_t,
             'atts_source':att_s,'atts_target':att_t}
 
     return source_,target_,log_
+
+def write_results_2_google(df, google_auth,
+                  spreadsheetId='invalid_id',
+                  sheetName = 'Sheet1'):
+  
+  """
+  Colab only
+  usage:
+    auth.authenticate_user()
+    creds, _ = default()
+    gc = gspread.authorize(creds) #google_auth
+
+    write_results_2_google(df,gc)
+  """
+  
+  from google.colab import auth
+  import gspread
+  from google.auth import default
+
+  sh = google_auth.open_by_key(spreadsheetId)
+  sheet = sh.worksheet(sheetName)
+
+  values = df.values.tolist()
+  #append_row
+  sh.values_append(sheetName, {'valueInputOption': 'USER_ENTERED'}, {'values': values})

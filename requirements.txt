@@ -11,3 +11,5 @@ tqdm==4.46.0
 
 scikit-learn>=0.22.1
 
+google-colab
+
