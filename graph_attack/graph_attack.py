@@ -362,7 +362,8 @@ def load_data_set(data_set_name, attr_num_list, ent_id_col, soundex_attr_val_lis
   # Read the header line if available
   #
   if (header_line_flag == True):
-    header_list = csv_reader.next()
+    header_list = next(csv_reader) # testar
+    # csv_reader.next()
 
     logging.debug('File header line:', header_list)
     logging.debug('  Attributes to be used:')
@@ -433,3 +434,54 @@ def load_data_set(data_set_name, attr_num_list, ent_id_col, soundex_attr_val_lis
   count_dist_dict.clear()
 
   return rec_attr_val_dict, attr_name_list, rec_num, rec_soundex_attr_val_dict
+
+# -----------------------------------------------------------------------------
+
+def gen_q_gram_sets(rec_attr_val_dict, q, padded_flag):
+  """Convert the attribute value(s) for each record into one q-gram set. If
+     there are several attributes they are concatenated by a single space
+     character.
+
+     Only add a record to the q-gram dictionary if its q-gram set is not empty.
+
+     Input arguments:
+       - rec_attr_val_dict  A dictionary with entity identifiers as keys and
+                            where values are lists of attribute values.
+       - q                  The number of characters per q-gram.
+       - padded_flag        if set to True then values will be padded at the
+                            beginning and end, otherwise not.
+
+     Output:
+       - q_gram_dict  A dictionary with entity identifiers as keys and one
+                      q-gram set per record.
+  """
+
+  q_gram_dict = {}
+
+  qm1 = q-1  # Shorthand
+
+  for (ent_id, attr_val_list) in rec_attr_val_dict.items():
+    
+    rec_q_gram_set = set()
+    
+    for attr_val in attr_val_list:
+      attr_val_str = attr_val.strip()
+      
+      if (padded_flag == True):  # Add padding start and end characters
+        attr_val_str = PAD_CHAR*qm1+attr_val_str+PAD_CHAR*qm1
+  
+      attr_val_len = len(attr_val_str)
+  
+      # Convert into q-grams and process them
+      #
+      attr_q_gram_list = [attr_val_str[i:i+q] for i in range(attr_val_len - qm1)]
+      attr_q_gram_set = set(attr_q_gram_list)
+      
+      rec_q_gram_set = rec_q_gram_set.union(attr_q_gram_set)
+
+    if (len(rec_q_gram_set) > 0):
+      q_gram_dict[ent_id] = rec_q_gram_set
+
+  return q_gram_dict
+
+# -----------------------------------------------------------------------------
