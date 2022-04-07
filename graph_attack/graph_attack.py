@@ -485,3 +485,5 @@ def gen_q_gram_sets(rec_attr_val_dict, q, padded_flag):
   return q_gram_dict
 
 # -----------------------------------------------------------------------------
+
+### Step 2 methods
