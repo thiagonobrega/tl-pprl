@@ -4,6 +4,7 @@
 # Peter Christen, June to September 2018
 # -----------------------------------------------------------------------------
 
+import sys
 import logging
 import hashlib
 import itertools

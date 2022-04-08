@@ -32,6 +32,7 @@
 # =============================================================================
 # Import necessary modules (Febrl modules first, then Python standard modules)
 
+import sys
 import logging
 import os
 import sys
