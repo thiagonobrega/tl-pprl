@@ -247,8 +247,9 @@ def encode_ds(encode_q_gram_dict,encode_attr_list,encode_rec_attr_val_dict,
                 plain_rec_attr_val_dict,
                 encode_method,bf_len,q,bf_encode,
                 random_seed, # definir
-                bf_hash_type='rh',bf_num_hash_funct='opt',
                 padded_flag='t', #clk
+                #bf
+                bf_hash_type='rh',bf_num_hash_funct='opt',
                 bf_enc_param='t', #rbf
                 # tmh param
                 tmh_hash_funct='md5',tmh_num_hash_bits=200,
@@ -259,7 +260,7 @@ def encode_ds(encode_q_gram_dict,encode_attr_list,encode_rec_attr_val_dict,
     
     start_time = time.time()
     assert bf_hash_type in ['rh' , 'dh']
-    assert bf_hash_type in ['clk' , 'rbf' , 'rbf-d']
+    assert bf_encode in ['clk' , 'rbf' , 'rbf-d']
 
     
     if (encode_method == 'bf'): # Bloom filter encoding
