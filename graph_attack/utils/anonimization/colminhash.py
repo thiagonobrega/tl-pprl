@@ -65,7 +65,7 @@ import bitarray
 import operator
 import hashlib
 
-import simcalc  # Similarity functions for q-grams and bit-arrays
+from graph_attack.utils import simcalc  # Similarity functions for q-grams and bit-arrays
 
 
 
