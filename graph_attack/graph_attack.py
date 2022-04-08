@@ -273,7 +273,7 @@ def encode_ds(encode_q_gram_dict,encode_attr_list,encode_rec_attr_val_dict,
             total_num_q_gram = 0
             total_num_val =    0
 
-            for q_gram_set in encode_q_gram_dict.itervalues():
+            for q_gram_set in encode_q_gram_dict.values():
                 total_num_q_gram += len(q_gram_set)
                 total_num_val +=    1
 
