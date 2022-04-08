@@ -494,191 +494,191 @@ class RandomHashing():
 # =============================================================================
 # Some testing code if called from the command line
 
-if (__name__ == '__main__'):
+# if (__name__ == '__main__'):
 
-  print 'Running some tests:'
-  print
+#   print 'Running some tests:'
+#   print
 
-  # Define three hash functions
-  #
-  bf_hash_funct1 = hashlib.sha1
-  bf_hash_funct2 = hashlib.md5
-  bf_hash_funct3 = hashlib.sha256
+#   # Define three hash functions
+#   #
+#   bf_hash_funct1 = hashlib.sha1
+#   bf_hash_funct2 = hashlib.md5
+#   bf_hash_funct3 = hashlib.sha256
 
-  # Define Bloom filter hashing parameters
-  #
-  bf_len = 1000
-  k =      10
+#   # Define Bloom filter hashing parameters
+#   #
+#   bf_len = 1000
+#   k =      10
 
-  test_q_gram_set = set(['he','el','ll','lo','o ',' w','wo','or','rl','ld'])
+#   test_q_gram_set = set(['he','el','ll','lo','o ',' w','wo','or','rl','ld'])
 
-  print '  Test q-gram set:', test_q_gram_set
-  print
+#   print '  Test q-gram set:', test_q_gram_set
+#   print
 
-  print '  Testing double hashing...',  # - - - - - - - - - - - - - - - - - - -
+#   print '  Testing double hashing...',  # - - - - - - - - - - - - - - - - - - -
 
-  # Initialise the double hashing class
-  #
-  DH = DoubleHashing(bf_hash_funct1, bf_hash_funct2, bf_len, k)
+#   # Initialise the double hashing class
+#   #
+#   DH = DoubleHashing(bf_hash_funct1, bf_hash_funct2, bf_len, k)
 
-  dh_bf1 = DH.hash_q_gram_set(test_q_gram_set)
-  assert len(dh_bf1) == bf_len
-  assert dh_bf1.count(1) > 0
+#   dh_bf1 = DH.hash_q_gram_set(test_q_gram_set)
+#   assert len(dh_bf1) == bf_len
+#   assert dh_bf1.count(1) > 0
 
-  dh_bf2 = DH.hash_q_gram_set(test_q_gram_set)
-  assert len(dh_bf2) == bf_len
-  assert dh_bf2.count(1) > 0
+#   dh_bf2 = DH.hash_q_gram_set(test_q_gram_set)
+#   assert len(dh_bf2) == bf_len
+#   assert dh_bf2.count(1) > 0
 
-  assert dh_bf1 == dh_bf2
+#   assert dh_bf1 == dh_bf2
 
-  dh_bf3 = DH.hash_q_gram_set(test_q_gram_set, 'test salt str')
-  assert len(dh_bf3) == bf_len
-  assert dh_bf3.count(1) > 0
+#   dh_bf3 = DH.hash_q_gram_set(test_q_gram_set, 'test salt str')
+#   assert len(dh_bf3) == bf_len
+#   assert dh_bf3.count(1) > 0
 
-  assert dh_bf1 != dh_bf3
+#   assert dh_bf1 != dh_bf3
 
-  # Check g-gram position dictionary
-  #
-  DH2 = DoubleHashing(bf_hash_funct1, bf_hash_funct2, bf_len, k, True)
+#   # Check g-gram position dictionary
+#   #
+#   DH2 = DoubleHashing(bf_hash_funct1, bf_hash_funct2, bf_len, k, True)
 
-  dh_bf, dh_q_gram_pos_dict = DH2.hash_q_gram_set(test_q_gram_set)
+#   dh_bf, dh_q_gram_pos_dict = DH2.hash_q_gram_set(test_q_gram_set)
 
-  assert len(dh_q_gram_pos_dict) == len(test_q_gram_set)
-  for (q_gram, pos_set) in dh_q_gram_pos_dict.iteritems():
-    assert q_gram in test_q_gram_set
-    assert len(pos_set) > 0 and len(pos_set) <= k
-    for pos in pos_set:
-      assert pos >= 0 and pos < bf_len
+#   assert len(dh_q_gram_pos_dict) == len(test_q_gram_set)
+#   for (q_gram, pos_set) in dh_q_gram_pos_dict.items():
+#     assert q_gram in test_q_gram_set
+#     assert len(pos_set) > 0 and len(pos_set) <= k
+#     for pos in pos_set:
+#       assert pos >= 0 and pos < bf_len
 
-  print 'OK'
-  print
+#   print 'OK'
+#   print
 
-  print '  Testing enchanced double hashing...',  # - - - - - - - - - - - - - -
+#   print '  Testing enchanced double hashing...',  # - - - - - - - - - - - - - -
 
-  # Initialise the enhanced double hashing class
-  #
-  EDH = EnhancedDoubleHashing(bf_hash_funct1, bf_hash_funct2, bf_len, k)
+#   # Initialise the enhanced double hashing class
+#   #
+#   EDH = EnhancedDoubleHashing(bf_hash_funct1, bf_hash_funct2, bf_len, k)
 
-  edh_bf1 = EDH.hash_q_gram_set(test_q_gram_set)
-  assert len(edh_bf1) == bf_len
-  assert edh_bf1.count(1) > 0
+#   edh_bf1 = EDH.hash_q_gram_set(test_q_gram_set)
+#   assert len(edh_bf1) == bf_len
+#   assert edh_bf1.count(1) > 0
 
-  edh_bf2 = EDH.hash_q_gram_set(test_q_gram_set)
-  assert len(edh_bf2) == bf_len
-  assert edh_bf2.count(1) > 0
+#   edh_bf2 = EDH.hash_q_gram_set(test_q_gram_set)
+#   assert len(edh_bf2) == bf_len
+#   assert edh_bf2.count(1) > 0
 
-  assert edh_bf1 == edh_bf2
+#   assert edh_bf1 == edh_bf2
 
-  edh_bf3 = EDH.hash_q_gram_set(test_q_gram_set, 'test salt str')
-  assert len(edh_bf3) == bf_len
-  assert edh_bf3.count(1) > 0
+#   edh_bf3 = EDH.hash_q_gram_set(test_q_gram_set, 'test salt str')
+#   assert len(edh_bf3) == bf_len
+#   assert edh_bf3.count(1) > 0
 
-  assert edh_bf1 != edh_bf3
+#   assert edh_bf1 != edh_bf3
 
-  assert dh_bf1 != edh_bf1  # Highly unlikely the two hashing approaches will
-  assert dh_bf2 != edh_bf2  # generate the same Bloom filters
-  assert dh_bf3 != edh_bf3
+#   assert dh_bf1 != edh_bf1  # Highly unlikely the two hashing approaches will
+#   assert dh_bf2 != edh_bf2  # generate the same Bloom filters
+#   assert dh_bf3 != edh_bf3
 
-  # Check g-gram position dictionary
-  #
-  EDH2 = EnhancedDoubleHashing(bf_hash_funct1, bf_hash_funct2, bf_len, k, True)
+#   # Check g-gram position dictionary
+#   #
+#   EDH2 = EnhancedDoubleHashing(bf_hash_funct1, bf_hash_funct2, bf_len, k, True)
 
-  edh_bf, edh_q_gram_pos_dict = EDH2.hash_q_gram_set(test_q_gram_set)
+#   edh_bf, edh_q_gram_pos_dict = EDH2.hash_q_gram_set(test_q_gram_set)
 
-  assert len(edh_q_gram_pos_dict) == len(test_q_gram_set)
-  for (q_gram, pos_set) in edh_q_gram_pos_dict.iteritems():
-    assert q_gram in test_q_gram_set
-    assert len(pos_set) > 0 and len(pos_set) <= k
-    for pos in pos_set:
-      assert pos >= 0 and pos < bf_len
+#   assert len(edh_q_gram_pos_dict) == len(test_q_gram_set)
+#   for (q_gram, pos_set) in edh_q_gram_pos_dict.items():
+#     assert q_gram in test_q_gram_set
+#     assert len(pos_set) > 0 and len(pos_set) <= k
+#     for pos in pos_set:
+#       assert pos >= 0 and pos < bf_len
 
-  print 'OK'
-  print
+#   print 'OK'
+#   print
 
-  print '  Testing triple hashing...',  # - - - - - - - - - - - - - - - - - - -
+#   print '  Testing triple hashing...',  # - - - - - - - - - - - - - - - - - - -
 
-  # Initialise the triple hashing class
-  #
-  TH = TripleHashing(bf_hash_funct1, bf_hash_funct2, bf_hash_funct3, bf_len, k)
+#   # Initialise the triple hashing class
+#   #
+#   TH = TripleHashing(bf_hash_funct1, bf_hash_funct2, bf_hash_funct3, bf_len, k)
 
-  th_bf1 = TH.hash_q_gram_set(test_q_gram_set)
-  assert len(th_bf1) == bf_len
-  assert th_bf1.count(1) > 0
+#   th_bf1 = TH.hash_q_gram_set(test_q_gram_set)
+#   assert len(th_bf1) == bf_len
+#   assert th_bf1.count(1) > 0
 
-  th_bf2 = TH.hash_q_gram_set(test_q_gram_set)
-  assert len(th_bf2) == bf_len
-  assert th_bf2.count(1) > 0
+#   th_bf2 = TH.hash_q_gram_set(test_q_gram_set)
+#   assert len(th_bf2) == bf_len
+#   assert th_bf2.count(1) > 0
 
-  assert th_bf1 == th_bf2
+#   assert th_bf1 == th_bf2
 
-  th_bf3 = TH.hash_q_gram_set(test_q_gram_set, 'test salt str')
-  assert len(th_bf3) == bf_len
-  assert th_bf3.count(1) > 0
+#   th_bf3 = TH.hash_q_gram_set(test_q_gram_set, 'test salt str')
+#   assert len(th_bf3) == bf_len
+#   assert th_bf3.count(1) > 0
 
-  assert th_bf1 != th_bf3
+#   assert th_bf1 != th_bf3
 
-  assert dh_bf1 != th_bf1  # Highly unlikely the two hashing approaches will
-  assert dh_bf2 != th_bf2  # generate the same Bloom filters
-  assert dh_bf3 != th_bf3
+#   assert dh_bf1 != th_bf1  # Highly unlikely the two hashing approaches will
+#   assert dh_bf2 != th_bf2  # generate the same Bloom filters
+#   assert dh_bf3 != th_bf3
 
-  # Check g-gram position dictionary
-  #
-  TH2 = TripleHashing(bf_hash_funct1, bf_hash_funct2, bf_hash_funct3, bf_len,
-                      k, True)
+#   # Check g-gram position dictionary
+#   #
+#   TH2 = TripleHashing(bf_hash_funct1, bf_hash_funct2, bf_hash_funct3, bf_len,
+#                       k, True)
 
-  th_bf, th_q_gram_pos_dict = TH2.hash_q_gram_set(test_q_gram_set)
+#   th_bf, th_q_gram_pos_dict = TH2.hash_q_gram_set(test_q_gram_set)
 
-  assert len(th_q_gram_pos_dict) == len(test_q_gram_set)
-  for (q_gram, pos_set) in th_q_gram_pos_dict.iteritems():
-    assert q_gram in test_q_gram_set
-    assert len(pos_set) > 0 and len(pos_set) <= k
-    for pos in pos_set:
-      assert pos >= 0 and pos < bf_len
+#   assert len(th_q_gram_pos_dict) == len(test_q_gram_set)
+#   for (q_gram, pos_set) in th_q_gram_pos_dict.items():
+#     assert q_gram in test_q_gram_set
+#     assert len(pos_set) > 0 and len(pos_set) <= k
+#     for pos in pos_set:
+#       assert pos >= 0 and pos < bf_len
 
-  print 'OK'
-  print
+#   print 'OK'
+#   print
 
-  print '  Testing random hashing...',  # - - - - - - - - - - - - - - - - - - -
+#   print '  Testing random hashing...',  # - - - - - - - - - - - - - - - - - - -
 
-  # Initialise the random hashing class
-  #
-  RH = RandomHashing(bf_hash_funct1, bf_len, k)
+#   # Initialise the random hashing class
+#   #
+#   RH = RandomHashing(bf_hash_funct1, bf_len, k)
 
-  rh_bf1 = RH.hash_q_gram_set(test_q_gram_set)
-  assert len(rh_bf1) == bf_len
-  assert rh_bf1.count(1) > 0
+#   rh_bf1 = RH.hash_q_gram_set(test_q_gram_set)
+#   assert len(rh_bf1) == bf_len
+#   assert rh_bf1.count(1) > 0
 
-  rh_bf2 = RH.hash_q_gram_set(test_q_gram_set)
-  assert len(rh_bf2) == bf_len
-  assert rh_bf2.count(1) > 0
+#   rh_bf2 = RH.hash_q_gram_set(test_q_gram_set)
+#   assert len(rh_bf2) == bf_len
+#   assert rh_bf2.count(1) > 0
 
-  assert rh_bf1 == rh_bf2
+#   assert rh_bf1 == rh_bf2
 
-  rh_bf3 = RH.hash_q_gram_set(test_q_gram_set, 'test salt str')
-  assert len(rh_bf3) == bf_len
-  assert rh_bf3.count(1) > 0
+#   rh_bf3 = RH.hash_q_gram_set(test_q_gram_set, 'test salt str')
+#   assert len(rh_bf3) == bf_len
+#   assert rh_bf3.count(1) > 0
 
-  assert rh_bf1 != rh_bf3
+#   assert rh_bf1 != rh_bf3
 
-  assert dh_bf1 != rh_bf1  # Highly unlikely the two hashing approaches will
-  assert dh_bf2 != rh_bf2  # generate the same Bloom filters
-  assert dh_bf3 != rh_bf3
+#   assert dh_bf1 != rh_bf1  # Highly unlikely the two hashing approaches will
+#   assert dh_bf2 != rh_bf2  # generate the same Bloom filters
+#   assert dh_bf3 != rh_bf3
 
-  # Check g-gram position dictionary
-  #
-  RH2 = RandomHashing(bf_hash_funct1, bf_len, k, True)
+#   # Check g-gram position dictionary
+#   #
+#   RH2 = RandomHashing(bf_hash_funct1, bf_len, k, True)
 
-  rh_bf, rh_q_gram_pos_dict = RH2.hash_q_gram_set(test_q_gram_set)
+#   rh_bf, rh_q_gram_pos_dict = RH2.hash_q_gram_set(test_q_gram_set)
 
-  assert len(rh_q_gram_pos_dict) == len(test_q_gram_set)
-  for (q_gram, pos_set) in rh_q_gram_pos_dict.iteritems():
-    assert q_gram in test_q_gram_set
-    assert len(pos_set) > 0 and len(pos_set) <= k
-    for pos in pos_set:
-      assert pos >= 0 and pos < bf_len
+#   assert len(rh_q_gram_pos_dict) == len(test_q_gram_set)
+#   for (q_gram, pos_set) in rh_q_gram_pos_dict.items():
+#     assert q_gram in test_q_gram_set
+#     assert len(pos_set) > 0 and len(pos_set) <= k
+#     for pos in pos_set:
+#       assert pos >= 0 and pos < bf_len
 
-  print 'OK'
-  print
+#   print 'OK'
+#   print
 
-# =============================================================================
-# End.
+# # =============================================================================
+# # End.

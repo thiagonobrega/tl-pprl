@@ -117,7 +117,7 @@ class AttributeBFEncoding():
     # Check there are enough attribute values
     #
     if (self.attr_num >= len(attr_val_list)):
-        raise Exception, 'Not enough attributes provided'
+        raise Exception('Not enough attributes provided')
 
     q = self.q  # Short-cuts
     qm1 = q - 1
@@ -131,7 +131,7 @@ class AttributeBFEncoding():
 
     attr_val_len = len(attr_val)
 
-    q_gram_set = set([attr_val[i:i+q] for i in xrange(attr_val_len - qm1)])
+    q_gram_set = set([attr_val[i:i+q] for i in range(attr_val_len - qm1)])
 
     if (mc_harden_class != None):
       extra_q_gram_set = \
@@ -252,7 +252,7 @@ class CryptoLongtermKeyBFEncoding():
       # Check there are enough attribute values
       #
       if (attr_num >= len(attr_val_list)):
-          raise Exception, 'Not enough attributes provided'
+          raise Exception('Not enough attributes provided')
 
       if (salt_str_list != None):
         salt_str = salt_str_list[j]
@@ -270,7 +270,7 @@ class CryptoLongtermKeyBFEncoding():
 
       attr_val_len = len(attr_val)
 
-      q_gram_set = set([attr_val[i:i+q] for i in xrange(attr_val_len - qm1)])
+      q_gram_set = set([attr_val[i:i+q] for i in range(attr_val_len - qm1)])
 
       if (mc_harden_class != None):
         extra_q_gram_set = \
@@ -282,7 +282,7 @@ class CryptoLongtermKeyBFEncoding():
       if (get_bit_pos_flag == True):
         bf, q_gram_pos_dict = hash_class.hash_q_gram_set(q_gram_set, salt_str)
         
-        for (q_gram, pos_set) in q_gram_pos_dict.iteritems():
+        for (q_gram, pos_set) in q_gram_pos_dict.items():
           all_pos_set = all_q_gram_pos_dict.get(q_gram, set())
           all_pos_set.update(pos_set)
           all_q_gram_pos_dict[q_gram] = all_pos_set
@@ -456,7 +456,7 @@ class RecordBFEncoding():
   
         # Convert attribute value into its q-grams
         #
-        q_gram_set = set([attr_val[i:i+q] for i in xrange(attr_val_len - qm1)])
+        q_gram_set = set([attr_val[i:i+q] for i in range(attr_val_len - qm1)])
 
         q_gram_lengh_sum +=  len(q_gram_set)
         number_of_q_grams += 1
@@ -611,7 +611,7 @@ class RecordBFEncoding():
       # Check there are enough attribute values
       #
       if (attr_num >= len(attr_val_list)):
-          raise Exception, 'Not enough attributes provided'
+          raise Exception('Not enough attributes provided')
 
       qm1 = q - 1
 
@@ -629,7 +629,7 @@ class RecordBFEncoding():
 
       attr_val_len = len(attr_val)
 
-      q_gram_set = set([attr_val[i:i+q] for i in xrange(attr_val_len - qm1)])
+      q_gram_set = set([attr_val[i:i+q] for i in range(attr_val_len - qm1)])
 
       if (mc_harden_class != None):
         extra_q_gram_set = \
@@ -644,7 +644,7 @@ class RecordBFEncoding():
         # Convert into a position / q-gram dictionary for merging into RBF
         #
         pos_q_gram_dict = {}
-        for (q_gram, pos_set) in q_gram_pos_dict.iteritems():
+        for (q_gram, pos_set) in q_gram_pos_dict.items():
           for pos in pos_set:
             q_gram_set = pos_q_gram_dict.get(pos, set())
             q_gram_set.add(q_gram)
@@ -706,7 +706,7 @@ class RecordBFEncoding():
 
       perm_pos_list = self.perm_pos_list
 
-      for pos in xrange(rbf_bf_len):
+      for pos in range(rbf_bf_len):
         perm_rbf_bf[pos] = rbf_bf[perm_pos_list[pos]]
 
       # If needed also change the bit positions of all q-grams
@@ -747,378 +747,378 @@ class RecordBFEncoding():
 # =============================================================================
 # Some testing code if called from the command line
 
-if (__name__ == '__main__'):
-
-  print 'Running some tests:'
-  print
-
-  import hashlib    # A standard Python library
-  import hashing    # Bloom filter hashing module
-  import hardening  # Bloom filter hardening module
+# if (__name__ == '__main__'):
+
+#   print 'Running some tests:'
+#   print
+
+#   import hashlib    # A standard Python library
+#   import hashing    # Bloom filter hashing module
+#   import hardening  # Bloom filter hardening module
 
-  # Define two hash functions
-  #
-  bf_hash_funct1 = hashlib.sha1
-  bf_hash_funct2 = hashlib.md5
-  bf_hash_funct3 = hashlib.sha224
+#   # Define two hash functions
+#   #
+#   bf_hash_funct1 = hashlib.sha1
+#   bf_hash_funct2 = hashlib.md5
+#   bf_hash_funct3 = hashlib.sha224
 
-  # Define Bloom filter hashing parameters
-  #
-  bf_len = 1000
-  k =      10
+#   # Define Bloom filter hashing parameters
+#   #
+#   bf_len = 1000
+#   k =      10
 
-  # Define four hashing methods
-  #
-  DH =  hashing.DoubleHashing(bf_hash_funct1, bf_hash_funct2, bf_len, k)
-  RH =  hashing.RandomHashing(bf_hash_funct1, bf_len, 2*k)
-  EDH = hashing.EnhancedDoubleHashing(bf_hash_funct1, bf_hash_funct2,
-                                      bf_len, 3*k)
-  TH =  hashing.TripleHashing(bf_hash_funct1, bf_hash_funct2, bf_hash_funct3,
-                              bf_len, 2*k)
+#   # Define four hashing methods
+#   #
+#   DH =  hashing.DoubleHashing(bf_hash_funct1, bf_hash_funct2, bf_len, k)
+#   RH =  hashing.RandomHashing(bf_hash_funct1, bf_len, 2*k)
+#   EDH = hashing.EnhancedDoubleHashing(bf_hash_funct1, bf_hash_funct2,
+#                                       bf_len, 3*k)
+#   TH =  hashing.TripleHashing(bf_hash_funct1, bf_hash_funct2, bf_hash_funct3,
+#                               bf_len, 2*k)
 
-  # Define several records
-  #
-  rec_list = [['sean', 'smith',  'sydney',     '2000', 'nsw'],
-              ['mary', 'miller', 'melbourne',  '3000', 'vic'],
-              ['tony', 'tinker', 'townsville', '7123', 'qld']]
+#   # Define several records
+#   #
+#   rec_list = [['sean', 'smith',  'sydney',     '2000', 'nsw'],
+#               ['mary', 'miller', 'melbourne',  '3000', 'vic'],
+#               ['tony', 'tinker', 'townsville', '7123', 'qld']]
 
-  print '  Testing attribute level Bloom filter encoding...',  # - - - - - - -
+#   print '  Testing attribute level Bloom filter encoding...',  # - - - - - - -
 
-  # Initialise the attribute level Bloom filter encoding class
+#   # Initialise the attribute level Bloom filter encoding class
 
-  # Setup encoding of first names with q=2 using double hashing)
-  #
-  ABFencode_first_name2 = AttributeBFEncoding(0, 2, False, DH)
+#   # Setup encoding of first names with q=2 using double hashing)
+#   #
+#   ABFencode_first_name2 = AttributeBFEncoding(0, 2, False, DH)
 
-  # Setup encoding of first names with q=4, padded, and random hashing
-  #
-  ABFencode_first_name4 = AttributeBFEncoding(0, 4, True, RH)
+#   # Setup encoding of first names with q=4, padded, and random hashing
+#   #
+#   ABFencode_first_name4 = AttributeBFEncoding(0, 4, True, RH)
 
-  # Setup encoding of town names with q=3 and random hashing
-  #
-  ABFencode_town_name = AttributeBFEncoding(2,3, False, RH)
+#   # Setup encoding of town names with q=3 and random hashing
+#   #
+#   ABFencode_town_name = AttributeBFEncoding(2,3, False, RH)
 
-  # Encode the three records
-  #
-  for attr_val_list in rec_list:
-    ss = attr_val_list[3]  # Use postcode as salting value
+#   # Encode the three records
+#   #
+#   for attr_val_list in rec_list:
+#     ss = attr_val_list[3]  # Use postcode as salting value
 
-    first_name_bf1 = ABFencode_first_name2.encode(attr_val_list)
-    print first_name_bf1
-    first_name_bf2 = ABFencode_first_name2.encode(attr_val_list, salt_str=ss)
-    assert len(first_name_bf1) == bf_len
-    assert len(first_name_bf2) == bf_len
+#     first_name_bf1 = ABFencode_first_name2.encode(attr_val_list)
+#     print first_name_bf1
+#     first_name_bf2 = ABFencode_first_name2.encode(attr_val_list, salt_str=ss)
+#     assert len(first_name_bf1) == bf_len
+#     assert len(first_name_bf2) == bf_len
 
-    assert first_name_bf1 != first_name_bf2  # Very unlikely they are the same
+#     assert first_name_bf1 != first_name_bf2  # Very unlikely they are the same
 
-    first_name_bf3 = ABFencode_first_name4.encode(attr_val_list)
-    first_name_bf4 = ABFencode_first_name4.encode(attr_val_list, salt_str=ss)
-    assert len(first_name_bf3) == bf_len
-    assert len(first_name_bf4) == bf_len
+#     first_name_bf3 = ABFencode_first_name4.encode(attr_val_list)
+#     first_name_bf4 = ABFencode_first_name4.encode(attr_val_list, salt_str=ss)
+#     assert len(first_name_bf3) == bf_len
+#     assert len(first_name_bf4) == bf_len
 
-    assert first_name_bf3 != first_name_bf4  # Very unlikely they are the same
+#     assert first_name_bf3 != first_name_bf4  # Very unlikely they are the same
 
-    town_name_bf1 = ABFencode_town_name.encode(attr_val_list)
-    town_name_bf2 = ABFencode_town_name.encode(attr_val_list, salt_str=ss)
-    assert len(town_name_bf1) == bf_len
-    assert len(town_name_bf2) == bf_len
+#     town_name_bf1 = ABFencode_town_name.encode(attr_val_list)
+#     town_name_bf2 = ABFencode_town_name.encode(attr_val_list, salt_str=ss)
+#     assert len(town_name_bf1) == bf_len
+#     assert len(town_name_bf2) == bf_len
 
-    assert town_name_bf1 != town_name_bf2  # Very unlikely they are the same
+#     assert town_name_bf1 != town_name_bf2  # Very unlikely they are the same
 
-  # Check g-gram position dictionary
-  #
-  DH2 = hashing.DoubleHashing(bf_hash_funct1, bf_hash_funct2, bf_len, k, True)
+#   # Check g-gram position dictionary
+#   #
+#   DH2 = hashing.DoubleHashing(bf_hash_funct1, bf_hash_funct2, bf_len, k, True)
 
-  ABFencode_first_name3 = AttributeBFEncoding(0, 2, False, DH2)
+#   ABFencode_first_name3 = AttributeBFEncoding(0, 2, False, DH2)
 
-  for attr_val_list in rec_list:
-    first_name_bf1, abf_q_gram_pos_dict = \
-                                 ABFencode_first_name3.encode(attr_val_list)
-    assert len(abf_q_gram_pos_dict) > 0
+#   for attr_val_list in rec_list:
+#     first_name_bf1, abf_q_gram_pos_dict = \
+#                                  ABFencode_first_name3.encode(attr_val_list)
+#     assert len(abf_q_gram_pos_dict) > 0
 
-    for (q_gram, pos_set) in abf_q_gram_pos_dict.iteritems():
-      assert q_gram in attr_val_list[0]  # Q-gram must be in attribute number 0
-      assert len(pos_set) > 0 and len(pos_set) <= k
-      for pos in pos_set:
-        assert pos >= 0 and pos < bf_len
+#     for (q_gram, pos_set) in abf_q_gram_pos_dict.items():
+#       assert q_gram in attr_val_list[0]  # Q-gram must be in attribute number 0
+#       assert len(pos_set) > 0 and len(pos_set) <= k
+#       for pos in pos_set:
+#         assert pos >= 0 and pos < bf_len
 
-  print 'OK'
-  print
+#   print 'OK'
+#   print
 
-  print '  Testing cryptographic long-term key encoding',  # - - - - - - - - -
+#   print '  Testing cryptographic long-term key encoding',  # - - - - - - - - -
 
-  # Define the hashing method used (traditional CLK uses the same hashing
-  # method for all attributes to be hashed into a CLK BF)
-  #
-  DH =  hashing.DoubleHashing(bf_hash_funct1, bf_hash_funct2, bf_len, k)
+#   # Define the hashing method used (traditional CLK uses the same hashing
+#   # method for all attributes to be hashed into a CLK BF)
+#   #
+#   DH =  hashing.DoubleHashing(bf_hash_funct1, bf_hash_funct2, bf_len, k)
 
-  attr_tuple_list1 = [(0, 2, False, DH), (1, 3, True, DH)]
+#   attr_tuple_list1 = [(0, 2, False, DH), (1, 3, True, DH)]
 
-  attr_tuple_list2 = [(1, 2, False, DH), (0, 2, True, DH), (2, 4, False, DH)]
+#   attr_tuple_list2 = [(1, 2, False, DH), (0, 2, True, DH), (2, 4, False, DH)]
 
-  attr_tuple_list3 = [(0, 2, True, DH), (2, 3, False, DH), (3, 2, True, DH),
-                      (4, 2, False, DH)]
+#   attr_tuple_list3 = [(0, 2, True, DH), (2, 3, False, DH), (3, 2, True, DH),
+#                       (4, 2, False, DH)]
 
-  CLKtuple1 = CryptoLongtermKeyBFEncoding(attr_tuple_list1)
+#   CLKtuple1 = CryptoLongtermKeyBFEncoding(attr_tuple_list1)
 
-  CLKtuple2 = CryptoLongtermKeyBFEncoding(attr_tuple_list2)
+#   CLKtuple2 = CryptoLongtermKeyBFEncoding(attr_tuple_list2)
 
-  CLKtuple3 = CryptoLongtermKeyBFEncoding(attr_tuple_list3)
+#   CLKtuple3 = CryptoLongtermKeyBFEncoding(attr_tuple_list3)
 
-  salt_str_list = ['ab', '43', None, '#']
+#   salt_str_list = ['ab', '43', None, '#']
 
-  for attr_val_list in rec_list:
+#   for attr_val_list in rec_list:
 
-    rec_bf1 = CLKtuple1.encode(attr_val_list)
-    print rec_bf1
-    rec_bf2 = CLKtuple1.encode(attr_val_list, salt_str_list)
+#     rec_bf1 = CLKtuple1.encode(attr_val_list)
+#     print rec_bf1
+#     rec_bf2 = CLKtuple1.encode(attr_val_list, salt_str_list)
 
-    assert len(rec_bf1) == bf_len
-    assert len(rec_bf2) == bf_len
+#     assert len(rec_bf1) == bf_len
+#     assert len(rec_bf2) == bf_len
 
-    assert rec_bf1 != rec_bf2  # Very unlikely they are the same
-    assert rec_bf1.count(1) > 0
-    assert rec_bf2.count(1) > 0
+#     assert rec_bf1 != rec_bf2  # Very unlikely they are the same
+#     assert rec_bf1.count(1) > 0
+#     assert rec_bf2.count(1) > 0
 
-    rec_bf3 = CLKtuple2.encode(attr_val_list)
-    rec_bf4 = CLKtuple2.encode(attr_val_list, salt_str_list)
+#     rec_bf3 = CLKtuple2.encode(attr_val_list)
+#     rec_bf4 = CLKtuple2.encode(attr_val_list, salt_str_list)
 
-    assert len(rec_bf3) == bf_len
-    assert len(rec_bf4) == bf_len
+#     assert len(rec_bf3) == bf_len
+#     assert len(rec_bf4) == bf_len
 
-    assert rec_bf3 != rec_bf4  # Very unlikely they are the same
-    assert rec_bf3.count(1) > 0
-    assert rec_bf4.count(1) > 0
+#     assert rec_bf3 != rec_bf4  # Very unlikely they are the same
+#     assert rec_bf3.count(1) > 0
+#     assert rec_bf4.count(1) > 0
 
-    rec_bf5 = CLKtuple3.encode(attr_val_list)
-    rec_bf6 = CLKtuple3.encode(attr_val_list, salt_str_list)
+#     rec_bf5 = CLKtuple3.encode(attr_val_list)
+#     rec_bf6 = CLKtuple3.encode(attr_val_list, salt_str_list)
 
-    assert len(rec_bf5) == bf_len
-    assert len(rec_bf6) == bf_len
+#     assert len(rec_bf5) == bf_len
+#     assert len(rec_bf6) == bf_len
 
-    assert rec_bf5 != rec_bf6  # Very unlikely they are the same
-    assert rec_bf5.count(1) > 0
-    assert rec_bf6.count(1) > 0
+#     assert rec_bf5 != rec_bf6  # Very unlikely they are the same
+#     assert rec_bf5.count(1) > 0
+#     assert rec_bf6.count(1) > 0
 
-  # Check g-gram position dictionary
-  #
-  DH2 = hashing.DoubleHashing(bf_hash_funct1, bf_hash_funct2, bf_len, k, True)
+#   # Check g-gram position dictionary
+#   #
+#   DH2 = hashing.DoubleHashing(bf_hash_funct1, bf_hash_funct2, bf_len, k, True)
 
-  attr_tuple_list4 = [(0, 2, False, DH2), (1, 3, False, DH2)]
+#   attr_tuple_list4 = [(0, 2, False, DH2), (1, 3, False, DH2)]
 
-  CLKtuple4 = CryptoLongtermKeyBFEncoding(attr_tuple_list4)
+#   CLKtuple4 = CryptoLongtermKeyBFEncoding(attr_tuple_list4)
 
-  for attr_val_list in rec_list:
-    rec_bf4, clk_q_gram_pos_dict = CLKtuple4.encode(attr_val_list)
-    assert len(clk_q_gram_pos_dict) > 0
+#   for attr_val_list in rec_list:
+#     rec_bf4, clk_q_gram_pos_dict = CLKtuple4.encode(attr_val_list)
+#     assert len(clk_q_gram_pos_dict) > 0
 
-    for (q_gram, pos_set) in clk_q_gram_pos_dict.iteritems():
-      assert q_gram in attr_val_list[0]+attr_val_list[1]
+#     for (q_gram, pos_set) in clk_q_gram_pos_dict.items():
+#       assert q_gram in attr_val_list[0]+attr_val_list[1]
 
-      assert len(pos_set) > 0 and len(pos_set) <= k
-      for pos in pos_set:
-        assert pos >= 0 and pos < bf_len
+#       assert len(pos_set) > 0 and len(pos_set) <= k
+#       for pos in pos_set:
+#         assert pos >= 0 and pos < bf_len
 
-  print 'OK'
-  print
+#   print 'OK'
+#   print
 
-  print '  Testing record-level Bloom filter encoding...',  # - - - - - - - - -
+#   print '  Testing record-level Bloom filter encoding...',  # - - - - - - - - -
 
-  # Test static length RBF first
-  #
-  rec_tuple_list1 = [(0, 2, False, DH, 400), (1, 3, True, DH, 600)]
+#   # Test static length RBF first
+#   #
+#   rec_tuple_list1 = [(0, 2, False, DH, 400), (1, 3, True, DH, 600)]
 
-  rec_tuple_list2 = [(1, 2, False, RH, 500), (0, 2, True, DH, 200),
-                     (2, 4, False, RH, 300)]
+#   rec_tuple_list2 = [(1, 2, False, RH, 500), (0, 2, True, DH, 200),
+#                      (2, 4, False, RH, 300)]
 
-  rec_tuple_list3 = [(0, 2, False, EDH, 400), (2, 3, True, RH, 200),
-                     (3, 2, False, DH,  200), (4, 2, True, TH, 200)]
+#   rec_tuple_list3 = [(0, 2, False, EDH, 400), (2, 3, True, RH, 200),
+#                      (3, 2, False, DH,  200), (4, 2, True, TH, 200)]
 
-  RBFtuple1 = RecordBFEncoding(rec_tuple_list1)
+#   RBFtuple1 = RecordBFEncoding(rec_tuple_list1)
 
-  RBFtuple2 = RecordBFEncoding(rec_tuple_list2)
+#   RBFtuple2 = RecordBFEncoding(rec_tuple_list2)
 
-  RBFtuple3 = RecordBFEncoding(rec_tuple_list3)
+#   RBFtuple3 = RecordBFEncoding(rec_tuple_list3)
 
-  salt_str_list = ['ab', '43', None, '#']
+#   salt_str_list = ['ab', '43', None, '#']
 
-  for attr_val_list in rec_list:
+#   for attr_val_list in rec_list:
 
-    rec_bf1 = RBFtuple1.encode(attr_val_list)
-    rec_bf2 = RBFtuple1.encode(attr_val_list, salt_str_list)
+#     rec_bf1 = RBFtuple1.encode(attr_val_list)
+#     rec_bf2 = RBFtuple1.encode(attr_val_list, salt_str_list)
 
-    assert len(rec_bf1) == bf_len, (len(rec_bf1), bf_len)
-    assert len(rec_bf2) == bf_len, (len(rec_bf2), bf_len)
+#     assert len(rec_bf1) == bf_len, (len(rec_bf1), bf_len)
+#     assert len(rec_bf2) == bf_len, (len(rec_bf2), bf_len)
 
-    assert rec_bf1 != rec_bf2  # Very unlikely they are the same
-    assert rec_bf1.count(1) > 0
-    assert rec_bf2.count(1) > 0
+#     assert rec_bf1 != rec_bf2  # Very unlikely they are the same
+#     assert rec_bf1.count(1) > 0
+#     assert rec_bf2.count(1) > 0
 
-    rec_bf3 = RBFtuple2.encode(attr_val_list)
-    rec_bf4 = RBFtuple2.encode(attr_val_list, salt_str_list)
+#     rec_bf3 = RBFtuple2.encode(attr_val_list)
+#     rec_bf4 = RBFtuple2.encode(attr_val_list, salt_str_list)
 
-    assert len(rec_bf3) == bf_len, (len(rec_bf3), bf_len)
-    assert len(rec_bf4) == bf_len, (len(rec_bf4), bf_len)
+#     assert len(rec_bf3) == bf_len, (len(rec_bf3), bf_len)
+#     assert len(rec_bf4) == bf_len, (len(rec_bf4), bf_len)
 
-    assert rec_bf3 != rec_bf4  # Very unlikely they are the same
-    assert rec_bf3.count(1) > 0
-    assert rec_bf4.count(1) > 0
+#     assert rec_bf3 != rec_bf4  # Very unlikely they are the same
+#     assert rec_bf3.count(1) > 0
+#     assert rec_bf4.count(1) > 0
 
-    rec_bf5 = RBFtuple3.encode(attr_val_list)
-    rec_bf6 = RBFtuple3.encode(attr_val_list, salt_str_list)
+#     rec_bf5 = RBFtuple3.encode(attr_val_list)
+#     rec_bf6 = RBFtuple3.encode(attr_val_list, salt_str_list)
 
-    assert len(rec_bf5) == bf_len, (len(rec_bf5), bf_len)
-    assert len(rec_bf6) == bf_len, (len(rec_bf6), bf_len)
+#     assert len(rec_bf5) == bf_len, (len(rec_bf5), bf_len)
+#     assert len(rec_bf6) == bf_len, (len(rec_bf6), bf_len)
 
-    assert rec_bf5 != rec_bf6  # Very unlikely they are the same
-    assert rec_bf5.count(1) > 0
-    assert rec_bf6.count(1) > 0
+#     assert rec_bf5 != rec_bf6  # Very unlikely they are the same
+#     assert rec_bf5.count(1) > 0
+#     assert rec_bf6.count(1) > 0
 
-  # Test dynamic length RBF next (need different number of bits to select)
-  #
-  bf_len1 = 140
-  rec_tuple_list1 = [(0, 2, False, DH, 40), (1, 3, True, DH, 100)]
+#   # Test dynamic length RBF next (need different number of bits to select)
+#   #
+#   bf_len1 = 140
+#   rec_tuple_list1 = [(0, 2, False, DH, 40), (1, 3, True, DH, 100)]
 
-  RBFtuple1 = RecordBFEncoding(rec_tuple_list1)
-  avr_num_q_gram_dict1 = RBFtuple1.get_avr_num_q_grams(rec_list)
-  abf_len_dict1 = RBFtuple1.get_dynamic_abf_len(avr_num_q_gram_dict1, k)
-  RBFtuple1.set_abf_len(abf_len_dict1)
+#   RBFtuple1 = RecordBFEncoding(rec_tuple_list1)
+#   avr_num_q_gram_dict1 = RBFtuple1.get_avr_num_q_grams(rec_list)
+#   abf_len_dict1 = RBFtuple1.get_dynamic_abf_len(avr_num_q_gram_dict1, k)
+#   RBFtuple1.set_abf_len(abf_len_dict1)
 
-  for attr_val_list in rec_list:
-    rec_bf7 = RBFtuple1.encode(attr_val_list)
-    rec_bf8 = RBFtuple1.encode(attr_val_list, salt_str_list)
+#   for attr_val_list in rec_list:
+#     rec_bf7 = RBFtuple1.encode(attr_val_list)
+#     rec_bf8 = RBFtuple1.encode(attr_val_list, salt_str_list)
 
-    assert len(rec_bf7) == bf_len1, (len(rec_bf7), bf_len1)
-    assert len(rec_bf8) == bf_len1, (len(rec_bf8), bf_len1)
+#     assert len(rec_bf7) == bf_len1, (len(rec_bf7), bf_len1)
+#     assert len(rec_bf8) == bf_len1, (len(rec_bf8), bf_len1)
 
-    assert rec_bf7 != rec_bf8  # Very unlikely they are the same
-    assert rec_bf7.count(1) > 0
-    assert rec_bf8.count(1) > 0
+#     assert rec_bf7 != rec_bf8  # Very unlikely they are the same
+#     assert rec_bf7.count(1) > 0
+#     assert rec_bf8.count(1) > 0
 
-  bf_len2 = 1000
-  #rec_tuple_list2 = [ (0, 2, True, DH, 70), (1, 2, False, RH, 60),
-  #                   (2, 4, False, RH, 70)]
-  rec_tuple_list2 = [ (0, 2, True, DH, 500), (1, 2, False, RH, 200),
-                     (2, 4, False, RH, 300)]
+#   bf_len2 = 1000
+#   #rec_tuple_list2 = [ (0, 2, True, DH, 70), (1, 2, False, RH, 60),
+#   #                   (2, 4, False, RH, 70)]
+#   rec_tuple_list2 = [ (0, 2, True, DH, 500), (1, 2, False, RH, 200),
+#                      (2, 4, False, RH, 300)]
 
-  RBFtuple2 = RecordBFEncoding(rec_tuple_list2)
-  avr_num_q_gram_dict2 = RBFtuple2.get_avr_num_q_grams(rec_list)
-  abf_len_dict2 = RBFtuple1.get_dynamic_abf_len(avr_num_q_gram_dict2, k) 
-  RBFtuple2.set_abf_len(abf_len_dict2)
+#   RBFtuple2 = RecordBFEncoding(rec_tuple_list2)
+#   avr_num_q_gram_dict2 = RBFtuple2.get_avr_num_q_grams(rec_list)
+#   abf_len_dict2 = RBFtuple1.get_dynamic_abf_len(avr_num_q_gram_dict2, k) 
+#   RBFtuple2.set_abf_len(abf_len_dict2)
 
-  for attr_val_list in rec_list:
-    rec_bf9 = RBFtuple2.encode(attr_val_list)
-    rec_bf10 = RBFtuple2.encode(attr_val_list, salt_str_list)
+#   for attr_val_list in rec_list:
+#     rec_bf9 = RBFtuple2.encode(attr_val_list)
+#     rec_bf10 = RBFtuple2.encode(attr_val_list, salt_str_list)
 
-    assert len(rec_bf9) == bf_len2, (len(rec_bf9), bf_len2)
-    assert len(rec_bf10) == bf_len2, (len(rec_bf10), bf_len2)
+#     assert len(rec_bf9) == bf_len2, (len(rec_bf9), bf_len2)
+#     assert len(rec_bf10) == bf_len2, (len(rec_bf10), bf_len2)
 
-    assert rec_bf9 != rec_bf10  # Very unlikely they are the same
-    assert rec_bf9.count(1) > 0
-    assert rec_bf10.count(1) > 0
+#     assert rec_bf9 != rec_bf10  # Very unlikely they are the same
+#     assert rec_bf9.count(1) > 0
+#     assert rec_bf10.count(1) > 0
 
-  bf_len3 = 200
-  rec_tuple_list3 = [(0, 2, False, EDH, 40), (2, 3, True, RH, 80),
-                     (3, 2, False, DH,  30), (4, 2, True, TH, 50)]
+#   bf_len3 = 200
+#   rec_tuple_list3 = [(0, 2, False, EDH, 40), (2, 3, True, RH, 80),
+#                      (3, 2, False, DH,  30), (4, 2, True, TH, 50)]
 
-  RBFtuple3 = RecordBFEncoding(rec_tuple_list3)
-  avr_num_q_gram_dict3 = RBFtuple3.get_avr_num_q_grams(rec_list)
-  abf_len_dict3 = RBFtuple1.get_dynamic_abf_len(avr_num_q_gram_dict3, k)
-  RBFtuple3.set_abf_len(abf_len_dict3)
+#   RBFtuple3 = RecordBFEncoding(rec_tuple_list3)
+#   avr_num_q_gram_dict3 = RBFtuple3.get_avr_num_q_grams(rec_list)
+#   abf_len_dict3 = RBFtuple1.get_dynamic_abf_len(avr_num_q_gram_dict3, k)
+#   RBFtuple3.set_abf_len(abf_len_dict3)
 
-  for attr_val_list in rec_list:
-    rec_bf11 = RBFtuple3.encode(attr_val_list)
-    rec_bf12 = RBFtuple3.encode(attr_val_list, salt_str_list)
+#   for attr_val_list in rec_list:
+#     rec_bf11 = RBFtuple3.encode(attr_val_list)
+#     rec_bf12 = RBFtuple3.encode(attr_val_list, salt_str_list)
 
-    assert len(rec_bf11) == bf_len3, (len(rec_bf11), bf_len3)
-    assert len(rec_bf12) == bf_len3, (len(rec_bf12), bf_len3)
+#     assert len(rec_bf11) == bf_len3, (len(rec_bf11), bf_len3)
+#     assert len(rec_bf12) == bf_len3, (len(rec_bf12), bf_len3)
 
-    assert rec_bf11 != rec_bf12  # Very unlikely they are the same
-    assert rec_bf11.count(1) > 0
-    assert rec_bf12.count(1) > 0
+#     assert rec_bf11 != rec_bf12  # Very unlikely they are the same
+#     assert rec_bf11.count(1) > 0
+#     assert rec_bf12.count(1) > 0
 
-  # Check g-gram position dictionary
-  #
-  DH3 = hashing.DoubleHashing(bf_hash_funct1, bf_hash_funct2, bf_len, k, True)
+#   # Check g-gram position dictionary
+#   #
+#   DH3 = hashing.DoubleHashing(bf_hash_funct1, bf_hash_funct2, bf_len, k, True)
 
-  rec_tuple_list4 = [(0, 2, False, DH2, 400), (1, 3, False, DH2, 600)]
+#   rec_tuple_list4 = [(0, 2, False, DH2, 400), (1, 3, False, DH2, 600)]
 
-  RBFtuple4 = RecordBFEncoding(rec_tuple_list4)
+#   RBFtuple4 = RecordBFEncoding(rec_tuple_list4)
 
-  for attr_val_list in rec_list:
+#   for attr_val_list in rec_list:
 
-    rec_bf4, rbf_q_gram_pos_dict = RBFtuple4.encode(attr_val_list)
-    assert len(rbf_q_gram_pos_dict) > 0
+#     rec_bf4, rbf_q_gram_pos_dict = RBFtuple4.encode(attr_val_list)
+#     assert len(rbf_q_gram_pos_dict) > 0
 
-    for (q_gram, pos_set) in rbf_q_gram_pos_dict.iteritems():
-      assert q_gram in attr_val_list[0]+attr_val_list[1]
+#     for (q_gram, pos_set) in rbf_q_gram_pos_dict.items():
+#       assert q_gram in attr_val_list[0]+attr_val_list[1]
 
-      assert len(pos_set) > 0 and len(pos_set) <= k
-      for pos in pos_set:
-        assert pos >= 0 and pos < bf_len
+#       assert len(pos_set) > 0 and len(pos_set) <= k
+#       for pos in pos_set:
+#         assert pos >= 0 and pos < bf_len
 
-  print 'OK'
-  print
+#   print 'OK'
+#   print
 
-  print '  Testing CLK-RBF encoding...',  # - - - - - - - - - - - - - - - - - -
+#   print '  Testing CLK-RBF encoding...',  # - - - - - - - - - - - - - - - - - -
 
-  # Define three hashing methods with different numbers of hash functions to
-  # simulate differeent weights
-  #
-  DHw1 = hashing.DoubleHashing(bf_hash_funct1, bf_hash_funct2, bf_len, k)
-  DHw2 = hashing.DoubleHashing(bf_hash_funct1, bf_hash_funct2, bf_len, 2*k)
-  DHw3 = hashing.DoubleHashing(bf_hash_funct1, bf_hash_funct2, bf_len, 3*k)
+#   # Define three hashing methods with different numbers of hash functions to
+#   # simulate differeent weights
+#   #
+#   DHw1 = hashing.DoubleHashing(bf_hash_funct1, bf_hash_funct2, bf_len, k)
+#   DHw2 = hashing.DoubleHashing(bf_hash_funct1, bf_hash_funct2, bf_len, 2*k)
+#   DHw3 = hashing.DoubleHashing(bf_hash_funct1, bf_hash_funct2, bf_len, 3*k)
 
-  attr_tuple_list1 = [(0, 2, False, DHw2), (1, 3, True, DHw3)]
+#   attr_tuple_list1 = [(0, 2, False, DHw2), (1, 3, True, DHw3)]
 
-  attr_tuple_list2 = [(0, 2, False, DHw3), (1, 2, True, DHw2),
-                      (2, 4, False, DHw1)]
+#   attr_tuple_list2 = [(0, 2, False, DHw3), (1, 2, True, DHw2),
+#                       (2, 4, False, DHw1)]
 
-  attr_tuple_list3 = [(0, 2, True, DHw3), (2, 3, False, DHw2),
-                      (3, 2, True, DHw1), (4, 2, False, DHw1)]
+#   attr_tuple_list3 = [(0, 2, True, DHw3), (2, 3, False, DHw2),
+#                       (3, 2, True, DHw1), (4, 2, False, DHw1)]
 
-  CLKRBFtuple1 = CryptoLongtermKeyBFEncoding(attr_tuple_list1)
+#   CLKRBFtuple1 = CryptoLongtermKeyBFEncoding(attr_tuple_list1)
 
-  CLKRBFtuple2 = CryptoLongtermKeyBFEncoding(attr_tuple_list2)
+#   CLKRBFtuple2 = CryptoLongtermKeyBFEncoding(attr_tuple_list2)
 
-  CLKRBFtuple3 = CryptoLongtermKeyBFEncoding(attr_tuple_list3)
+#   CLKRBFtuple3 = CryptoLongtermKeyBFEncoding(attr_tuple_list3)
 
-  salt_str_list = ['ab', '43', None, '#']
+#   salt_str_list = ['ab', '43', None, '#']
 
-  for attr_val_list in rec_list:
+#   for attr_val_list in rec_list:
 
-    rec_bf1 = CLKRBFtuple1.encode(attr_val_list)
-    rec_bf2 = CLKRBFtuple1.encode(attr_val_list, salt_str_list)
+#     rec_bf1 = CLKRBFtuple1.encode(attr_val_list)
+#     rec_bf2 = CLKRBFtuple1.encode(attr_val_list, salt_str_list)
 
-    assert len(rec_bf1) == bf_len
-    assert len(rec_bf2) == bf_len
+#     assert len(rec_bf1) == bf_len
+#     assert len(rec_bf2) == bf_len
 
-    assert rec_bf1 != rec_bf2  # Very unlikely they are the same
-    assert rec_bf1.count(1) > 0
-    assert rec_bf2.count(1) > 0
+#     assert rec_bf1 != rec_bf2  # Very unlikely they are the same
+#     assert rec_bf1.count(1) > 0
+#     assert rec_bf2.count(1) > 0
 
-    rec_bf3 = CLKRBFtuple2.encode(attr_val_list)
-    rec_bf4 = CLKRBFtuple2.encode(attr_val_list, salt_str_list)
+#     rec_bf3 = CLKRBFtuple2.encode(attr_val_list)
+#     rec_bf4 = CLKRBFtuple2.encode(attr_val_list, salt_str_list)
 
-    assert len(rec_bf3) == bf_len
-    assert len(rec_bf4) == bf_len
+#     assert len(rec_bf3) == bf_len
+#     assert len(rec_bf4) == bf_len
 
-    assert rec_bf3 != rec_bf4  # Very unlikely they are the same
-    assert rec_bf3.count(1) > 0
-    assert rec_bf4.count(1) > 0
+#     assert rec_bf3 != rec_bf4  # Very unlikely they are the same
+#     assert rec_bf3.count(1) > 0
+#     assert rec_bf4.count(1) > 0
 
-    rec_bf5 = CLKRBFtuple3.encode(attr_val_list)
-    rec_bf6 = CLKRBFtuple3.encode(attr_val_list, salt_str_list)
+#     rec_bf5 = CLKRBFtuple3.encode(attr_val_list)
+#     rec_bf6 = CLKRBFtuple3.encode(attr_val_list, salt_str_list)
 
-    assert len(rec_bf5) == bf_len
-    assert len(rec_bf6) == bf_len
+#     assert len(rec_bf5) == bf_len
+#     assert len(rec_bf6) == bf_len
 
-    assert rec_bf5 != rec_bf6  # Very unlikely they are the same
-    assert rec_bf5.count(1) > 0
-    assert rec_bf6.count(1) > 0
+#     assert rec_bf5 != rec_bf6  # Very unlikely they are the same
+#     assert rec_bf5.count(1) > 0
+#     assert rec_bf6.count(1) > 0
 
-  print 'OK'
-  print
+#   print 'OK'
+#   print
 
-# =============================================================================
-# End.
+# # =============================================================================
+# # End.

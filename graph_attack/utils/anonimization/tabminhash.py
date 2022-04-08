@@ -58,18 +58,19 @@ class TabMinHashEncoding():
     self.key_len =       key_len
     self.hash_funct =    hash_funct
 
-    print 'Generating list with %d tabulation hash tables, each with %d ' % \
+    print('Generating list with %d tabulation hash tables, each with %d ' % \
           (num_hash_bits, num_tables) + 'tables, each table with %d ' % \
           (2**key_len) + 'entries (key length %d bits and value length %d' % \
           (key_len, val_len)+' bits)'
-    print
+    )
+    print()
 
     tab_hash_table_list = []  # The 'num_hash_bits' tabulation hash tables
 
     if (random_seed != None):
       random.seed(random_seed)
 
-    for hash_bit in xrange(num_hash_bits):
+    for hash_bit in range(num_hash_bits):
 
       # The list of hash tables to be generated for a certain bit position,
       # where each will be a dictionary with bit strings of length 'key_len'
@@ -85,7 +86,7 @@ class TabMinHashEncoding():
       all_bit_pos =        range(key_len)
       key_bit_array_list = []
 
-      for sub_set_len in xrange(key_len+1):
+      for sub_set_len in range(key_len+1):
         for pos_sub_set in itertools.combinations(all_bit_pos, sub_set_len):
 
           # Generate an empty (all zero) bit array of length 'key_len' and set
@@ -104,7 +105,7 @@ class TabMinHashEncoding():
       assert len(key_bit_array_list) == 2**key_len, \
              (len(key_bit_array_list), 2**key_len)
 
-      for t in xrange(num_tables):
+      for t in range(num_tables):
 
         table_dict = {}
 
@@ -115,7 +116,7 @@ class TabMinHashEncoding():
           table_val_bit_array = bitarray.bitarray(val_len)
           table_val_bit_array.setall(0)
 
-          for pos in xrange(val_len):
+          for pos in range(val_len):
             table_val_bit_array[pos] = random.choice([0,1])
 
           table_dict[table_key_bit_array_str] = table_val_bit_array
@@ -176,7 +177,7 @@ class TabMinHashEncoding():
 
     # And XOR with the remaining extracted tabulation hashing table values
     #
-    for t in xrange(1, num_tables):
+    for t in range(1, num_tables):
       tab_hash_table_key = hash_bit_array_str[-key_len*(t+1):-key_len*t]
 
       # XOR (^) of table hash values
@@ -205,7 +206,7 @@ class TabMinHashEncoding():
     #
     q_gram_bit_array = bitarray.bitarray(num_hash_bits)
 
-    for bit_pos in xrange(num_hash_bits):
+    for bit_pos in range(num_hash_bits):
 
       min_hash_val = None  # Only keep the minimum min hash value
 

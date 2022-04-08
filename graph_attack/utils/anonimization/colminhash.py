@@ -133,7 +133,7 @@ class ColMinHashEncoding():
     #
     col_ba_list = []
 
-    for i in xrange(num_hash_col):
+    for i in range(num_hash_col):
       col_ba = bitarray.bitarray(num_hash_funct)
       col_ba.setall(0)
       col_ba_list.append(col_ba)
@@ -151,7 +151,7 @@ class ColMinHashEncoding():
       # sequence of integers generated in the following loop will be the same
       # for the same q-gram
       #
-      for row_index in xrange(num_hash_funct):
+      for row_index in range(num_hash_funct):
         col_index = random.randint(0, num_hash_col_m1)
 
         col_ba_list[col_index][row_index] = 1
@@ -222,47 +222,47 @@ class ColMinHashEncoding():
 # =============================================================================
 # Main program for testing
 
-if (__name__ == '__main__'):
+# if (__name__ == '__main__'):
 
-  import sys
+#   import sys
 
-  print 'Running some tests for column based hashing for PPRL:'
-  print
+#   print 'Running some tests for column based hashing for PPRL:'
+#   print
 
-  num_hash_funct = 10
-  num_hash_col   = 1000
-  rand_mode      = sys.argv[1]
+#   num_hash_funct = 10
+#   num_hash_col   = 1000
+#   rand_mode      = sys.argv[1]
 
-  # Initialise a column hash class
-  #
-  ColHash = ColMinHashEncoding(num_hash_funct, num_hash_col, rand_mode)
+#   # Initialise a column hash class
+#   #
+#   ColHash = ColMinHashEncoding(num_hash_funct, num_hash_col, rand_mode)
 
-  for (q_gram_list1, q_gram_list2) in \
-      [(['an','nn','na'], ['an','nn','na']),
-       (['pe','et','te','er'], ['pe','et','te']),
-       (['jo','on','na','at','th','ha','an'], ['jo','on','na','at','to','on']),
-       (['ma','ar','ry'], ['ma','ar','ri','ie'])]:
+#   for (q_gram_list1, q_gram_list2) in \
+#       [(['an','nn','na'], ['an','nn','na']),
+#        (['pe','et','te','er'], ['pe','et','te']),
+#        (['jo','on','na','at','th','ha','an'], ['jo','on','na','at','to','on']),
+#        (['ma','ar','ry'], ['ma','ar','ri','ie'])]:
 
-    print 'Pair of q-gram lists:', q_gram_list1,'/', q_gram_list2
+#     print 'Pair of q-gram lists:', q_gram_list1,'/', q_gram_list2
 
-    q_gram_set1 = set(q_gram_list1)
-    q_gram_set2 = set(q_gram_list2)
+#     q_gram_set1 = set(q_gram_list1)
+#     q_gram_set2 = set(q_gram_list2)
 
-    hash_set1 = ColHash.encode_q_gram_set(q_gram_set1)
-    print '  Hash set 1:', hash_set1
-    print '  Length    :', len(hash_set1)
-    print
-    hash_set2 = ColHash.encode_q_gram_set(q_gram_set2)
-    print '  Hash set 2:', hash_set2
-    print '  Length    :', len(hash_set2)
-    print
+#     hash_set1 = ColHash.encode_q_gram_set(q_gram_set1)
+#     print '  Hash set 1:', hash_set1
+#     print '  Length    :', len(hash_set1)
+#     print
+#     hash_set2 = ColHash.encode_q_gram_set(q_gram_set2)
+#     print '  Hash set 2:', hash_set2
+#     print '  Length    :', len(hash_set2)
+#     print
 
-    # Calculate Jaccard similarities
-    #
-    print '  Q-gram set Jaccard similarity: %.3f' % \
-          (simcalc.q_gram_jacc_sim(q_gram_set1, q_gram_set2))
-    print '    Column hash set Jaccard similarity: %.3f' % \
-          (simcalc.q_gram_jacc_sim(hash_set1, hash_set2))
-    print
+#     # Calculate Jaccard similarities
+#     #
+#     print '  Q-gram set Jaccard similarity: %.3f' % \
+#           (simcalc.q_gram_jacc_sim(q_gram_set1, q_gram_set2))
+#     print '    Column hash set Jaccard similarity: %.3f' % \
+#           (simcalc.q_gram_jacc_sim(hash_set1, hash_set2))
+#     print
 
-# End.
+# # End.
