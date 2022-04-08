@@ -31,12 +31,15 @@
 # =============================================================================
 
 import random
+import logging
 
 import numpy  # For the dynamic bitposition selection in Record level BFs
 
 import bitarray
 
 PAD_CHAR = chr(1)   # Used for q-gram padding
+
+logging.basicConfig(stream=sys.stderr, level=logging.INFO)
 
 # =============================================================================
 
@@ -429,7 +432,7 @@ class RecordBFEncoding():
 
     avr_num_q_gram_dict = {}
 
-    print 'Calculate average number of q-grams for attributes:'
+    logging.debug('Calculate average number of q-grams for attributes:')
 
     # Loop over the attributes for which the average number of q-grams is to
     # be calculated.
@@ -465,8 +468,9 @@ class RecordBFEncoding():
       #
       attr_avr_num_q_gram = q_gram_lengh_sum / number_of_q_grams
 
-      print '  Attribute number %d has an average number of q-grams of %.2f' \
+      logging.debug('  Attribute number %d has an average number of q-grams of %.2f' \
             % (attr_num, attr_avr_num_q_gram)
+      )
 
       assert attr_num not in avr_num_q_gram_dict
       avr_num_q_gram_dict[attr_num] = attr_avr_num_q_gram

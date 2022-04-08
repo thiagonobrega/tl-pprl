@@ -4,11 +4,15 @@
 # Peter Christen, June to September 2018
 # -----------------------------------------------------------------------------
 
+import logging
 import hashlib
 import itertools
 import random
 
 import bitarray
+
+
+logging.basicConfig(stream=sys.stderr, level=logging.INFO)
 
 # =============================================================================
 
@@ -58,12 +62,12 @@ class TabMinHashEncoding():
     self.key_len =       key_len
     self.hash_funct =    hash_funct
 
-    print('Generating list with %d tabulation hash tables, each with %d ' % \
+    logging.debug('Generating list with %d tabulation hash tables, each with %d ' % \
           (num_hash_bits, num_tables) + 'tables, each table with %d ' % \
           (2**key_len) + 'entries (key length %d bits and value length %d' % \
           (key_len, val_len)+' bits)'
     )
-    print()
+    logging.debug()
 
     tab_hash_table_list = []  # The 'num_hash_bits' tabulation hash tables
 
