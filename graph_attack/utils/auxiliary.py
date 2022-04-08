@@ -34,7 +34,6 @@
 
 import logging
 import os
-import sets
 import sys
 import types
 
@@ -182,7 +181,7 @@ def check_is_set(variable, value):
      Have to check both set module type as well as built in set type.
   """
 
-  if ((not isinstance(value, sets.Set)) and (not isinstance(value, set))):
+  if ((not isinstance(value, set)) and (not isinstance(value, set))):
     logging.exception('Value of "%s" is not a set: %s' % \
                       (variable, type(value)))
     raise Exception
@@ -337,10 +336,11 @@ def check_memory_use(max_mbyte):
   """
 
   if (get_memory_usage_val() > max_mbyte):
-    print
-    print '*** Warning: Program uses more than %d MBytes: %d MBytes ***' % \
+    print()
+    print('*** Warning: Program uses more than %d MBytes: %d MBytes ***' % \
           (max_mbyte, get_memory_usage_val())
-    print
+    )
+    print()
     sys.exit()  # Stop due to memory overuse
 
 # =============================================================================
