@@ -477,8 +477,7 @@ def encode_ds(encode_q_gram_dict,encode_attr_list,encode_rec_attr_val_dict,
 
     # Check which entity identifiers occur in both data sets
 
-    common_ent_id_set = set(plain_rec_attr_val_dict.keys()) & \
-                      set(common_num_ent.keys())
+    common_ent_id_set = set(plain_rec_attr_val_dict.keys()) & set(encode_hash_dict.keys())
     common_num_ent = len(common_ent_id_set)
 
     plain_num_ent =  len(plain_rec_attr_val_dict)
