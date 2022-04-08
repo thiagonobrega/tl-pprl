@@ -303,9 +303,19 @@ import gzip
 # import simcalc  # Similarity functions for q-grams and bit-arrays
 # import node2vec # Node2vec module for generating features using random walks
 
+import time
+import math
+import hashlib
 import logging, sys
 
+from utils import auxiliary
+from utils.anonimization import encoding, hashing , tabminhash , colminhash
+
 logging.basicConfig(stream=sys.stderr, level=logging.INFO)
+
+BF_HASH_FUNCT1 = hashlib.sha1
+BF_HASH_FUNCT2 = hashlib.md5
+
 # logging.debug('A debug message!')
 # logging.info('We processed %d records', 3)
 
@@ -461,7 +471,6 @@ def gen_q_gram_sets(rec_attr_val_dict, q, padded_flag):
   qm1 = q-1  # Shorthand
 
   for (ent_id, attr_val_list) in rec_attr_val_dict.items():
-    
     rec_q_gram_set = set()
     
     for attr_val in attr_val_list:
@@ -487,3 +496,255 @@ def gen_q_gram_sets(rec_attr_val_dict, q, padded_flag):
 # -----------------------------------------------------------------------------
 
 ### Step 2 methods
+
+# -----------------------------------------------------------------------------
+
+def encode_ds(encode_q_gram_dict,encode_attr_list,encode_rec_attr_val_dict,
+                plain_rec_attr_val_dict,
+                encode_method,bf_len,q,bf_encode,
+                random_seed, # definir
+                bf_hash_type='rh',bf_num_hash_funct='opt',
+                padded_flag='t', #clk
+                bf_enc_param='t', #rbf
+                # tmh param
+                tmh_hash_funct='md5',tmh_num_hash_bits=200,
+                tmh_num_tables=200,tmh_key_len=200,tmh_val_len=200,
+                # 2sg two hash encoding
+                cmh_num_hash_funct=0,cmh_num_hash_col=0
+            ):
+    
+    start_time = time.time()
+    assert bf_hash_type in ['rh' , 'dh']
+    assert bf_hash_type in ['clk' , 'rbf' , 'rbf-d']
+
+    
+    if (encode_method == 'bf'): # Bloom filter encoding
+
+        if (bf_num_hash_funct == 'opt'):
+            bf_num_hash_funct_str = 'opt' # qual o problema?
+
+            # Get the average number of q-grams in the string values
+            #
+            total_num_q_gram = 0
+            total_num_val =    0
+
+            for q_gram_set in encode_q_gram_dict.itervalues():
+                total_num_q_gram += len(q_gram_set)
+                total_num_val +=    1
+
+            avrg_num_q_gram = float(total_num_q_gram) / total_num_val
+
+            # Set number of hash functions to have in average 50% of bits set to 1
+            #
+            bf_num_hash_funct = int(round(math.log(2.0)*float(bf_len) / \
+                                    avrg_num_q_gram))
+
+            logging.debug(' Set optimal number of BF hash functions to: %d' % \
+                    (bf_num_hash_funct)
+            )
+
+        else:
+            bf_num_hash_funct_str = str(bf_num_hash_funct)
+
+        # Set up the Bloom filter hashing
+        #
+        if (bf_hash_type == 'dh'):
+            BF_hashing = hashing.DoubleHashing(BF_HASH_FUNCT1, BF_HASH_FUNCT2,
+                                                bf_len, bf_num_hash_funct)
+        elif (bf_hash_type == 'rh'):
+            BF_hashing = hashing.RandomHashing(BF_HASH_FUNCT1, bf_len,
+                                                bf_num_hash_funct)
+        else:
+            raise Exception('This should not happen')
+    
+    
+        # Check the BF encoding method
+        if(bf_encode == 'clk'): # Cryptographic Long-term Key
+            rec_tuple_list = []
+      
+            for att_num in range(len(encode_attr_list)):
+                rec_tuple_list.append([att_num, q, padded_flag, BF_hashing])
+    
+            BF_Encoding = encoding.CryptoLongtermKeyBFEncoding(rec_tuple_list)
+    
+        elif(bf_encode.startswith('rbf')): # Record-level Bloom filter
+      
+            num_bits_list = bf_enc_param # List of percentages of number of bits
+      
+            rec_tuple_list = []
+      
+            for att_num in range(len(encode_attr_list)):
+                rec_tuple_list.append([att_num, q, padded_flag, BF_hashing,
+                                        int(num_bits_list[att_num]*bf_len)])
+      
+            BF_Encoding = encoding.RecordBFEncoding(rec_tuple_list)
+      
+        if(bf_encode == 'rbf-d'): # AFB length set to dynamic
+        
+            rec_val_list = encode_rec_attr_val_dict.values()
+            avr_num_q_gram_dict = BF_Encoding.get_avr_num_q_grams(rec_val_list)
+            abf_len_dict = BF_Encoding.get_dynamic_abf_len(avr_num_q_gram_dict,bf_num_hash_funct)
+            BF_Encoding.set_abf_len(abf_len_dict)
+    
+
+        encode_hash_dict = {}  # Generate one bit-array hash code per record
+
+        # Keep the generated BF for each q-gram set so we only generate it once
+        #
+        bf_hash_cache_dict = {}
+
+        num_enc = 0  # Count number of encodings, print progress report
+    
+        for (ent_id, q_gram_set) in encode_q_gram_dict.items():
+            attr_val_list = encode_rec_attr_val_dict[ent_id]
+            num_enc += 1
+            # comentar isso qlq coisa
+            if (num_enc % 10000 == 0):
+                time_used = time.time() - start_time
+                logging.debug('  Encoded %d of %d q-gram sets in %d sec (%.2f msec average)' \
+                                % (num_enc, len(encode_q_gram_dict), time_used,
+                                1000.0*time_used/num_enc)
+                )
+                logging.debug('   ', auxiliary.get_memory_usage())
+        
+            q_gram_str = ''.join(sorted(q_gram_set))
+            if (q_gram_str in bf_hash_cache_dict):
+                q_gram_str_bf = bf_hash_cache_dict[q_gram_str]
+            else:
+                q_gram_str_bf = BF_Encoding.encode(attr_val_list)
+                q_gram_str_bf_test = BF_hashing.hash_q_gram_set(q_gram_set)
+                
+                if(bf_encode == 'clk'):
+                    assert q_gram_str_bf == q_gram_str_bf_test
+                
+                bf_hash_cache_dict[q_gram_str] = q_gram_str_bf
+            encode_hash_dict[ent_id] = q_gram_str_bf
+        # fim do for
+
+        logging.debug('')
+        logging.debug('  Encoded %d unique Bloom filters for %d q-gram sets' % \
+                    (len(bf_hash_cache_dict), len(encode_hash_dict))
+        )
+
+        bf_hash_cache_dict.clear()  # Not needed anymore
+
+    # Tabulation min-hash encoding
+    elif (encode_method == 'tmh'):
+
+        if (tmh_hash_funct == 'md5'):
+            tmh_hash_funct_obj = hashlib.md5
+        elif (tmh_hash_funct == 'sha1'):
+            tmh_hash_funct_obj = hashlib.sha1
+        elif (tmh_hash_funct == 'sha2'):
+            tmh_hash_funct_obj = hashlib.sha256
+        else:
+            raise Exception('This should not happen')
+
+        TMH_hashing = tabminhash.TabMinHashEncoding(tmh_num_hash_bits,
+                                                    tmh_num_tables, tmh_key_len,
+                                                    tmh_val_len, tmh_hash_funct_obj)
+
+        encode_hash_dict = {}  # Generate one bit-array hash code per record
+
+        # Keep the generated BA for each q-gram set so we only generate it once
+        #
+        ba_hash_cache_dict = {}
+
+        num_enc = 0  # Count number of encodings, print progress report
+
+        for (ent_id, q_gram_set) in encode_q_gram_dict.items():
+            num_enc += 1
+            if (num_enc % 10000 == 0): # alterar
+                time_used = time.time() - start_time
+                logging.debug('  Encoded %d of %d q-gram sets in %d sec (%.2f msec average)' \
+                                % (num_enc, len(encode_q_gram_dict), time_used,
+                                1000.0*time_used/num_enc)
+                )
+                logging.debug('   ', auxiliary.get_memory_usage())
+
+            q_gram_str = ''.join(sorted(q_gram_set))
+            if (q_gram_str in ba_hash_cache_dict):
+                q_gram_str_ba = ba_hash_cache_dict[q_gram_str]
+            else:
+                q_gram_str_ba = TMH_hashing.encode_q_gram_set(q_gram_set)
+                ba_hash_cache_dict[q_gram_str] = q_gram_str_ba
+            
+            encode_hash_dict[ent_id] = q_gram_str_ba
+
+        logging.debug('')
+        logging.debug('  Encoded %d unique bit-arrays for %d q-gram sets' % \
+            (len(ba_hash_cache_dict), len(encode_hash_dict))
+        )
+
+        ba_hash_cache_dict.clear()  # Not needed anymore
+
+    # Two-step hash encoding
+    elif(encode_method == '2sh'):
+
+        CMH_hashing = colminhash.ColMinHashEncoding(cmh_num_hash_funct,cmh_num_hash_col)
+
+        encode_hash_dict = {}  # Generate one column hash code per record
+
+        # Keep the generated column hash codes for each q-gram set so we only generate it once
+        #
+        col_hash_cache_dict = {}
+
+        num_enc = 0  # Count number of encodings, print progress report
+    
+        for (ent_id, q_gram_set) in encode_q_gram_dict.items():
+      
+            num_enc += 1
+            if (num_enc % 10000 == 0):
+                time_used = time.time() - start_time
+                logging.debug('  Encoded %d of %d q-gram sets in %d sec (%.2f msec average)' \
+                    % (num_enc, len(encode_q_gram_dict), time_used,
+                    1000.0*time_used/num_enc)
+                )
+                logging.debug('   ', auxiliary.get_memory_usage())
+
+            q_gram_str = ''.join(sorted(q_gram_set))
+
+            if (q_gram_str in col_hash_cache_dict):
+                q_gram_str_col_hash_set = col_hash_cache_dict[q_gram_str]
+            else:
+                q_gram_str_col_hash_set = CMH_hashing.encode_q_gram_set(q_gram_set)
+                col_hash_cache_dict[q_gram_str] = q_gram_str_col_hash_set
+      
+            encode_hash_dict[ent_id] = q_gram_str_col_hash_set
+
+        logging.debug('')
+        logging.debug('  Encoded %d unique col hash sets for %d q-gram sets' % \
+            (len(col_hash_cache_dict), len(encode_hash_dict))
+        )
+    
+        col_hash_cache_dict.clear()  # Not needed anymore  
+  
+    else:
+        raise Exception('This should not happen')
+
+    #novo alinhamneto
+    hashing_time = time.time() - start_time
+
+    logging.debug('')
+    logging.debug('Time for hashing the encode data set: %.2f sec' % (hashing_time) )
+    logging.debug('  Number of records hashed:', len(encode_hash_dict) )
+    logging.debug('')
+
+    # Check which entity identifiers occur in both data sets
+
+    common_ent_id_set = set(plain_rec_attr_val_dict.keys()) & \
+                      set(common_num_ent.keys())
+    common_num_ent = len(common_ent_id_set)
+
+    plain_num_ent =  len(plain_rec_attr_val_dict)
+    encode_num_ent = len(encode_hash_dict)
+
+    return encode_hash_dict,hashing_time,plain_num_ent, encode_num_ent # colocar outros retornos se necessario
+
+# -----------------------------------------------------------------------------
+
+### Step 3 methods
+
+# -----------------------------------------------------------------------------
+
+# -----------------------------------------------------------------------------
