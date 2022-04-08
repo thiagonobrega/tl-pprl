@@ -512,7 +512,7 @@ class RecordBFEncoding():
 
     dyn_abf_len_dict = {}
 
-    print 'Calculate Bloom filter lengths for attributes:'
+    logging.debug('Calculate Bloom filter lengths for attributes:')
 
     # Loop over each attribute which will be used in encoding
     #
@@ -525,9 +525,10 @@ class RecordBFEncoding():
 
       dyn_abf_len_dict[attr_num] = dyn_abf_size
 
-      print '  Attribute number %d has an average number of q-grams of %.2f' \
+      logging.debug('  Attribute number %d has an average number of q-grams of %.2f' \
           % (attr_num, attr_avr_num_q_gram) + ' resulting an Bloom filter ' + \
           'length of %d' % (dyn_abf_size)
+      )
 
     return dyn_abf_len_dict
 
