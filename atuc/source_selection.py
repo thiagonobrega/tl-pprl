@@ -7,6 +7,7 @@
 @Contact :   thiagonobrega@gmail.com
 @Desc    :   "Methods related to the feature and source selection stage"
 '''
+import pandas as pd
 
 from sklearn.linear_model import LogisticRegression
 from sklearn.svm import LinearSVC
