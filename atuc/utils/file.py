@@ -39,7 +39,6 @@ def open_ds(infile , n_atts='atts-1' , deduplica=True):
 
     return a
 
-
 def load_data(context_s,context_t,
               s_compfile,t_compfile,
               att_s,att_t,
@@ -86,3 +85,33 @@ def write_results_2_google(df, google_auth,
   values = df.values.tolist()
   #append_row
   sh.values_append(sheetName, {'valueInputOption': 'USER_ENTERED'}, {'values': values})
+
+
+
+def merge_experiments_results(df_quality_results , df_source_selection_results , s1_model='Logistic' , pesos=[], start=-5):
+    # agrupar_por_dft
+    '''
+    MERGE tl_pprl with dr_pprl to
+
+    :param df_quality_results: tl_pprl quality results (pandas.DataFrame)
+    :param df_source_selection_results: source selection results (pandas.DataFrame)
+    :param s1_model: Select weigthing schema employed in stage 01 default value: Logistic
+    :param pesos: chose weith
+    :return:
+    '''
+    # filtrandondo
+    if len(pesos) != 0:
+        df_quality_results = df_quality_results[df_quality_results['stage1_weight'].isin(pesos)]
+        df_quality_results = df_quality_results[(df_quality_results.stage1_model == s1_model)]
+
+    df = pd.merge(df_quality_results , df_source_selection_results , how='left' , on='scenario')
+    df = df.iloc[: , [i for i in range(len(df_quality_results.columns))] + [i for i in range(start , 0)]]
+    # cols = dft.columns + dfr.columns[-6:-1]
+
+    end = -1
+    scols = start - 1
+
+    df.columns = list(df_quality_results.columns) + list(df_source_selection_results.columns[scols:end])
+    del df['scenario']
+    # dfr.iloc[:,-6:-1]
+    return df

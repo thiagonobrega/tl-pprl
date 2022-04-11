@@ -5,7 +5,7 @@
 @Time    :   2022/04/03 10:31:46
 @Author  :   Thiago Nóbrega 
 @Contact :   thiagonobrega@gmail.com
-@Desc    :   "Methods related to the feature and source selection stage"
+@Desc    :   "Methods related to the feature and source selection stage."
 '''
 import pandas as pd
 
@@ -16,7 +16,6 @@ from sklearn.calibration import CalibratedClassifierCV
 
 from atuc.utils import ajustar_treino, showPredictionsSummary
 from atuc.stage1 import s1_prepareTrainingData, s1_trainDSClassifier, s1_selectData2Train
-
 
 
 def calcular_metricas_dados_relacionado(source_,target_,atts = [2,3,4,5,6],
