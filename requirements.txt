@@ -17,5 +17,5 @@ google-colab
 ### Attack
 ###
 networkx
-gensim.models
+# gensim.models
 binascii
