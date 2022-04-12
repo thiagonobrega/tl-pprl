@@ -13,3 +13,10 @@ scikit-learn>=0.22.1
 
 google-colab
 
+###
+### Attack
+###
+networkx
+pickle
+gensim.models
+binascii
