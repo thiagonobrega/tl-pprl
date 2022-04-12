@@ -28,8 +28,9 @@ def showPredictionsSummary(Y):
 def calcularTamanho(nm, pm):
     '''
      Metodo para calcular o tamanho do dataset para o metodo abaixo
-    :param nm:
-    :param pm:
+     
+    :param nm: numero de matches
+    :param pm: percentual
     :return:
     '''
     assert pm < 1

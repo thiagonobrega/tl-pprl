@@ -80,7 +80,7 @@ def s1_trainDSClassifier(X_train, Y_train, model):
     return model
 
 
-def s1_selectData2Train(modelo, s, lambada_corte=.51, atributos=[2, 3, 4, 5], col_gab=[7]):
+def s1_selectData2Train(modelo, source_ds, lambada_corte=.51, atributos=[2, 3, 4, 5], col_gab=[7]):
     '''
         Seleciona os dados para treinarem o classificador target
 
@@ -89,8 +89,8 @@ def s1_selectData2Train(modelo, s, lambada_corte=.51, atributos=[2, 3, 4, 5], co
 
     '''
 
-    pp = modelo.predict_proba(s.iloc[:, 2:(2 + len(atributos))])
-    fds = s.copy()
+    pp = modelo.predict_proba(source_ds.iloc[:, 2:(2 + len(atributos))])
+    fds = source_ds.copy()
     fds['pp'] = pp[:, 1].tolist()
 
     return fds[(fds['pp'] >= lambada_corte)].iloc[:, atributos + col_gab + [len(fds.columns) - 1]]  # ,fds['pp']
