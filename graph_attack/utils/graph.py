@@ -112,17 +112,17 @@ class SimGraph():
     feat_sim_graph = self.sim_graph
     
     if feat_sim_graph.has_edge(encode_node_key, plain_node_key):  # Check existing similarity is same
-      if (feat_sim_graph.edge[encode_node_key][plain_node_key]['feat_sim'] != sim):
+      if (feat_sim_graph.edges[encode_node_key][plain_node_key]['feat_sim'] != sim):
         logging.debug('  *** Warning: Edge between %s and %s has a different ' % \
                     (encode_node_key,plain_node_key) + \
                     'similarity to new similarity: %.3f versus %.3f' \
-                    % (sim_graph.edge[encode_node_key][plain_node_key]['feat_sim'], sim) + \
+                    % (sim_graph.edges[encode_node_key][plain_node_key]['feat_sim'], sim) + \
                     '(old value will be overwritten)'
         )
     else:
       feat_sim_graph.add_edge(encode_node_key,plain_node_key)
     
-    feat_sim_graph.edge[encode_node_key][plain_node_key]['feat_sim'] = sim  # Add or update edge
+    feat_sim_graph.edges[encode_node_key][plain_node_key]['feat_sim'] = sim  # Add or update edge
   
   # ---------------------------------------------------------------------------
   
@@ -138,7 +138,7 @@ class SimGraph():
     
     for (encode_key_val, plain_key_val) in feat_sim_graph.edges():
       
-      edge_sim_val = feat_sim_graph.edge[encode_key_val][plain_key_val]['feat_sim']
+      edge_sim_val = feat_sim_graph.edges[encode_key_val][plain_key_val]['feat_sim']
       
       #encode_node_neighbors = feat_sim_graph.neighbors(encode_key_val)
       #encode_node_neighbors = feat_sim_graph.neighbors(plain_key_val)
@@ -154,14 +154,14 @@ class SimGraph():
         if(neigh_key2 != plain_key_val):
           
           #enc_neighbour_sim_sum += feat_sim_graph[neigh_key1][neigh_key2]['feat_sim']
-          neighbour_sim_list.append(feat_sim_graph.edge[neigh_key1][neigh_key2]['feat_sim'])
+          neighbour_sim_list.append(feat_sim_graph.edges[neigh_key1][neigh_key2]['feat_sim'])
             
       for neigh_key1, neigh_key2 in feat_sim_graph.edges(plain_key_val):
         
         if(neigh_key2 != encode_key_val):
           
           #plain_neighbour_sim_sum += feat_sim_graph[neigh_key1][neigh_key2]['feat_sim']
-          neighbour_sim_list.append(feat_sim_graph.edge[neigh_key1][neigh_key2]['feat_sim'])
+          neighbour_sim_list.append(feat_sim_graph.edges[neigh_key1][neigh_key2]['feat_sim'])
       
       if(len(neighbour_sim_list) > 0):
         conf_val = edge_sim_val / numpy.mean(neighbour_sim_list)
@@ -169,7 +169,7 @@ class SimGraph():
         conf_val = 10.0
       conf_val_list.append(conf_val)
       
-      feat_sim_graph.edge[encode_key_val][plain_key_val]['conf'] = conf_val
+      feat_sim_graph.edges[encode_key_val][plain_key_val]['conf'] = conf_val
     
     conf_cal_time = time.time() - start_time
     
@@ -185,7 +185,7 @@ class SimGraph():
     
     feat_sim_graph = self.sim_graph
     
-    conf_val = feat_sim_graph.edge[encode_key][plain_key]['conf']
+    conf_val = feat_sim_graph.edges[encode_key][plain_key]['conf']
     
     return conf_val
   
@@ -222,17 +222,17 @@ class SimGraph():
     val1s, val2s = sorted([node_key_val1, node_key_val2])
 
     if sim_graph.has_edge(val1s, val2s):  # Check existing similarity is same
-      if (sim_graph.edge[val1s][val2s]['sim'] != sim):
+      if (sim_graph.edges[val1s][val2s]['sim'] != sim):
         logging.debug('  *** Warning: Edge between %s and %s has a different ' % \
               (node_key_val1,node_key_val2) + \
               'similarity to new similarity: %.3f versus %.3f' \
-              % (sim_graph.edge[val1s][val2s]['sim'], sim) + \
+              % (sim_graph.edges[val1s][val2s]['sim'], sim) + \
               '(old value will be overwritten)'
         )
 
     else:
       sim_graph.add_edge(val1s,val2s)
-    sim_graph.edge[val1s][val2s]['sim'] = sim  # Add or update edge
+    sim_graph.edges[val1s][val2s]['sim'] = sim  # Add or update edge
 
   # ---------------------------------------------------------------------------
   
@@ -293,7 +293,7 @@ class SimGraph():
         num_min_sim_edges = 0
 
         for (node_key_val1,node_key_val2) in sim_graph.edges():
-          if (sim_graph.edge[node_key_val1][node_key_val2]['sim'] >= min_sim):
+          if (sim_graph.edges[node_key_val1][node_key_val2]['sim'] >= min_sim):
             num_min_sim_edges += 1
         logging.debug('    Number of edges:          ', num_min_sim_edges)
 
@@ -309,7 +309,7 @@ class SimGraph():
           #
           for neigh_key_val in sim_graph.neighbors(node_key_val):
 
-            if (sim_graph.edge[node_key_val][neigh_key_val]['sim'] >= min_sim):
+            if (sim_graph.edges[node_key_val][neigh_key_val]['sim'] >= min_sim):
               node_degree += 1
           min_sim_degree_dist_dict[node_degree] = \
                      min_sim_degree_dist_dict.get(node_degree, 0) + 1
@@ -327,7 +327,7 @@ class SimGraph():
         for node_key_val in sim_graph.nodes():
           min_sim_graph.add_node(node_key_val)
         for (node_key_val1,node_key_val2) in sim_graph.edges():
-           if (sim_graph.edge[node_key_val1][node_key_val2]['sim'] >= min_sim):
+           if (sim_graph.edges[node_key_val1][node_key_val2]['sim'] >= min_sim):
               min_sim_graph.add_edge(node_key_val1,node_key_val2)
 
         conn_comp_list = list(networkx.connected_components(min_sim_graph))
@@ -472,7 +472,7 @@ class SimGraph():
 
         ba_sim = other_sim_funct(bit_array1, bit_array2)
 
-        edge_sim = sim_graph.edge[node_key_val1][node_key_val2]['sim']
+        edge_sim = sim_graph.edges[node_key_val1][node_key_val2]['sim']
 
         # If sim_diff is positive: encoded sim is larger than plain-text sim
         # If sim_diff is negative: encoded sim is smaller than plain-text sim
@@ -642,7 +642,7 @@ class SimGraph():
         rec_pair_dict_key = tuple(sorted([str1, str2]))
         assert rec_pair_dict_key not in sim_graph_pair_dict
         sim_graph_pair_dict[rec_pair_dict_key] = \
-              sim_graph.edge[node_key_val1][node_key_val2]['sim']
+              sim_graph.edges[node_key_val1][node_key_val2]['sim']
 
     for (node_key_val1, node_key_val2) in other_sim_graph.edges():
       str1 = \
@@ -657,7 +657,7 @@ class SimGraph():
           sim_graph_sim = sim_graph_pair_dict[rec_pair_dict_key]
           common_sim_graph_pair_dict[rec_pair_dict_key] = \
             (sim_graph_sim,
-             other_sim_graph.edge[node_key_val1][node_key_val2]['sim'])
+             other_sim_graph.edges[node_key_val1][node_key_val2]['sim'])
 
           # Once we have enough pairs exit the loop
           #
@@ -854,7 +854,7 @@ class SimGraph():
 
       qg_sim = other_sim_funct(q_gram_set1, q_gram_set2)
 
-      edge_sim = sim_graph.edge[node_key_val1][node_key_val2]['sim'] # encoded similarity
+      edge_sim = sim_graph.edges[node_key_val1][node_key_val2]['sim'] # encoded similarity
 
       x_val_list.append(qg_sim)
       y_val_list.append(edge_sim)
@@ -880,7 +880,7 @@ class SimGraph():
 # 
 #         qg_sim = other_sim_funct(q_gram_set1, q_gram_set2)
 # 
-#         edge_sim = sim_graph.edge[node_key_val1][node_key_val2]['sim'] # encoded similarity
+#         edge_sim = sim_graph.edges[node_key_val1][node_key_val2]['sim'] # encoded similarity
 # 
 #         x_val_list.append(qg_sim)
 #         y_val_list.append(edge_sim)
@@ -1281,7 +1281,7 @@ class SimGraph():
 
       max_edge_sim = 0.0
       for neigh_key_val in node_neigh_val_list:
-        edge_sim = sim_graph.edge[node_key_val][neigh_key_val]['sim']
+        edge_sim = sim_graph.edges[node_key_val][neigh_key_val]['sim']
         max_edge_sim = max(max_edge_sim, edge_sim)
         all_node_neigh_sim_list.append((neigh_key_val, edge_sim))
 
@@ -1349,7 +1349,7 @@ class SimGraph():
                    (hop2_neigh_key_val not in node_neigh_val_set):
 
                   edge_sim = \
-                      sim_graph.edge[neigh_key_val][hop2_neigh_key_val]['sim']
+                      sim_graph.edges[neigh_key_val][hop2_neigh_key_val]['sim']
 
                   if (edge_sim >= min_sim):
                     hop2_neigh_val_set.add(hop2_neigh_key_val)
@@ -1418,7 +1418,7 @@ class SimGraph():
         #
         di_graph = networkx.DiGraph()
         for (node_key_val1, node_key_val2) in sim_graph.edges():
-          if (sim_graph.edge[node_key_val1][node_key_val2]['sim'] >= min_sim):
+          if (sim_graph.edges[node_key_val1][node_key_val2]['sim'] >= min_sim):
             di_graph.add_edge(node_key_val1,node_key_val2)
             di_graph.add_edge(node_key_val2,node_key_val1)
 
