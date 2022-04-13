@@ -1001,8 +1001,8 @@ def genG(plain_num_ent,encode_num_ent,
         encode_soundex_val_dict,
         plain_soundex_val_dict,
         # encoded_plain_vars
-        qg_graph_node_id_dict, #TODO: VERIFICAR O QUE É ISSO
-        ba_graph_node_id_dict,
+        # qg_graph_node_id_dict, #TODO: VERIFICAR O QUE É ISSO
+        # ba_graph_node_id_dict,
         # regression
         regre_model_str,
         plain_base_data_set_name,
@@ -1059,6 +1059,12 @@ def genG(plain_num_ent,encode_num_ent,
     # Initialise the two graphs
     QG_sim_graph = SimGraph()
     BA_sim_graph = SimGraph()
+
+    # Two dictionaries that can be usedt to get similar nodes in both graphs
+    # since graph node values cannot be compared.
+    #
+    qg_graph_node_id_dict = {}
+    ba_graph_node_id_dict = {}
 
     #parametros de blocagem
     plain_sample_size = 4
