@@ -16,6 +16,7 @@ google-colab
 ###
 ### Attack
 ###
-networkx
+# need to be ported to a newer networkx
+networkx==2.1
 # gensim.models
 # binascii
