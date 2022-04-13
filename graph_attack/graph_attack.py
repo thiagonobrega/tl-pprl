@@ -559,7 +559,7 @@ def encode_hlsh_blocking(encode_data_dict, hlsh_sample_size, hlsh_num_sample,
                              numpy.mean(hlsh_block_size_list),
                              numpy.median(hlsh_block_size_list),
                              max(hlsh_block_size_list))
-							 )
+                             )
   
   logging.debug('  Time used: %.3f sec' % (time.time() - start_time))
   logging.debug('')
@@ -780,7 +780,7 @@ def build_regre_model(ba_sim_list, qg_sim_list, qg_num_q_gram_list,
   logging.debug('  Min/Max/Average absolute error: %.5f / %.5f / %.5f' %(min(err_val_list), \
                                                                  max(err_val_list), \
                                                                  numpy.mean(err_val_list))
-				)
+                )
   logging.debug('  Standard deviation error:       %.5f' %model_std_abs_err)
   logging.debug('  Mean-squared error:             %.5f' %model_mean_sqrd_err)
   logging.debug('  Mean-squared log error:         %.5f' %model_mean_sqrd_lg_err)
@@ -967,7 +967,7 @@ def test_sim_regre_model(regre_model, ba_sim_list, qg_sim_list, qg_num_q_gram_li
   logging.debug('  Min/Max/Average absolute error: %.5f / %.5f / %.5f' %(min(err_val_list), \
                                                                  max(err_val_list), \
                                                                  numpy.mean(err_val_list))
-				)
+                )
   logging.debug('  Standard deviation error:       %.5f' %model_std_abs_err)
   logging.debug('  Mean-squared error:             %.5f' %model_mean_sqrd_err)
   logging.debug('  Mean-squared log error:         %.5f' %model_mean_sqrd_lg_err)
@@ -991,15 +991,15 @@ def genG(plain_num_ent,encode_num_ent,
         encode_hash_dict,
         encode_q_gram_dict,
         encode_rec_attr_val_dict,
-		encode_blck_method, #'hmlsh': Hamming LSH blocking 'minhash' :  Min-hash LSH blocking
+        encode_blck_method, #'hmlsh': Hamming LSH blocking 'minhash' :  Min-hash LSH blocking
         #plain
         plain_q_gram_dict,
         plain_rec_attr_val_dict,
         plain_sim_funct_name,
-		plain_blck_method,
-		#soundex
-		encode_soundex_val_dict,
-		plain_soundex_val_dict,
+        plain_blck_method,
+        #soundex
+        encode_soundex_val_dict,
+        plain_soundex_val_dict,
         # encoded_plain_vars
         qg_graph_node_id_dict, #TODO: VERIFICAR O QUE É ISSO
         ba_graph_node_id_dict,
@@ -1015,41 +1015,41 @@ def genG(plain_num_ent,encode_num_ent,
         min_sim, # vem la de cima
         num_samples = 20000, # regression num samples
         random_seed=101,
-		## anonimizacao
-		bf_hash_type='clk',
-		bf_num_hash_funct=0,
-		bf_len=200,
-		bf_encode='xpto',
-		bf_harden='None',
-		# 2sh
-		cmh_max_rand_int=0,
-		cmh_num_hash_funct=0,
-		cmh_num_hash_col=0,
-		#tmh
-		tmh_hash_funct=0,
-		tmh_num_tables=0,
-		tmh_key_len=0,
-		tmh_val_len=0,
-		tmh_num_hash_bits=0, #num bits tmh
+        ## anonimizacao
+        bf_hash_type='clk',
+        bf_num_hash_funct=0,
+        bf_len=200,
+        bf_encode='xpto',
+        bf_harden='None',
+        # 2sh
+        cmh_max_rand_int=0,
+        cmh_num_hash_funct=0,
+        cmh_num_hash_col=0,
+        #tmh
+        tmh_hash_funct=0,
+        tmh_num_tables=0,
+        tmh_key_len=0,
+        tmh_val_len=0,
+        tmh_num_hash_bits=0, #num bits tmh
         # leitura dos grafos
         graph_path = '.',
         regre_file_path = 'regre-models/',
-		plain_graph_file_name='plain_graph',
-		encode_graph_file_name='encoded_graph',
+        plain_graph_file_name='plain_graph',
+        encode_graph_file_name='encoded_graph',
         # utilizar apenas atributos em comum
         include_only_common = False,
-		common_rec_id_set={},#setar caso seja utilizado
-		#nao sei o que e isso mas estava hardoced
-		same_ba_blck = False,
+        common_rec_id_set={},#setar caso seja utilizado
+        #nao sei o que e isso mas estava hardoced
+        same_ba_blck = False,
         #ajueste de similaridade
-		sim_diff_interval_size = 0.05,
+        sim_diff_interval_size = 0.05,
         sim_diff_adjust_flag=True):
-	#TODO:colocar assert tmh,bf,2sg
-	# tmh_hash_funct=0,
-	# tmh_num_tables=0,
-	# tmh_key_len=0,
-	# tmh_val_len=0,
-	# tmh_num_hash_bits=0, #num bits tmh
+    #TODO:colocar assert tmh,bf,2sg
+    # tmh_hash_funct=0,
+    # tmh_num_tables=0,
+    # tmh_key_len=0,
+    # tmh_val_len=0,
+    # tmh_num_hash_bits=0, #num bits tmh
     
 
     today_str = time.strftime("%Y%m%d", time.localtime())
@@ -1477,10 +1477,8 @@ def genG(plain_num_ent,encode_num_ent,
             #TODO: REVER VARIAVEIS
             #TODO: REVER SAIDA
             res_val_list = [today_str, now_str, plain_base_data_set_name, plain_attr_list_str, plain_num_rec_loaded,encode_base_data_set_name, encode_attr_list_str, encode_num_rec_loaded,q, str(padded_flag).lower(), sim_diff_adjust_flag, regre_model_str.lower(),plain_sim_funct_name, encode_sim_funct_name,min_sim, encode_method]
-			
-			#TODO: identacao
-			if (encode_method == 'bf'):
-            	res_val_list += [bf_hash_type, bf_num_hash_funct, bf_len, bf_encode, bf_harden]
+            if (encode_method == 'bf'):
+                res_val_list += [bf_hash_type, bf_num_hash_funct, bf_len, bf_encode, bf_harden]
             
             elif (encode_method == 'tmh'):
                 res_val_list += [tmh_num_hash_bits, tmh_hash_funct, tmh_num_tables, tmh_key_len, tmh_val_len]
@@ -1543,7 +1541,7 @@ def genG(plain_num_ent,encode_num_ent,
                                  numpy.mean(min_hash_block_size_list),
                                  numpy.median(min_hash_block_size_list),
                                  max(min_hash_block_size_list))
-	)
+    )
 
     logging.debug('  Compare %d record pairs from %s blocking:' % (num_rec_pair, plain_blck_method))
     logging.debug('    (total number of all record pairs: %d)' % (num_all_rec_pair))
@@ -1673,9 +1671,9 @@ def genG(plain_num_ent,encode_num_ent,
     logging.debug(' ', auxiliary.get_memory_usage())
     logging.debug('')
 
-	# retorno 
-	# ba_graph_gen_time
-	# qg_graph_gen_time,qg_graph_num_edges,qg_graph_num_singleton
-	return QG_sim_graph, BA_sim_graph
+    # retorno 
+    # ba_graph_gen_time
+    # qg_graph_gen_time,qg_graph_num_edges,qg_graph_num_singleton
+    return QG_sim_graph, BA_sim_graph
 
 # -----------------------------------------------------------------------------
