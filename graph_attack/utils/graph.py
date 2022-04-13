@@ -277,7 +277,10 @@ class SimGraph():
 
     # Count the number of singletons (identifiers with no edges)
     #
-    sim_graph_degree_list = sim_graph.degree().values()
+    sim_graph_degree_list = [] #.values()
+    for (i,d) in sim_graph.degree():
+      sim_graph_degree_list.append(d)
+
     num_singleton =         sim_graph_degree_list.count(0)
     sim_graph_degree_list = []  # Not needed anymore
 
@@ -369,7 +372,7 @@ class SimGraph():
 
     num_singleton = 0
 
-    for (node_key_val, node_degree) in sim_graph.degree().items():
+    for (node_key_val, node_degree) in sim_graph.degree():
       if (node_degree == 0):
         sim_graph.remove_node(node_key_val)
         num_singleton += 1
