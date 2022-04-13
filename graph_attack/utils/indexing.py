@@ -129,7 +129,7 @@ class MinHashLSH():
     crc_hash_set = set()
 
     for q_gram in q_gram_set:  # Hash the q-grams into 32-bit integers
-      crc_hash_set.add(binascii.crc32(q_gram) & 0xffffffff)
+      crc_hash_set.add(binascii.crc32(str.encode(q_gram)) & 0xffffffff)
 
     assert len(q_gram_set) == len(crc_hash_set)  # Check no collision
 
