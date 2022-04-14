@@ -372,7 +372,7 @@ class SimGraph():
 
     num_singleton = 0
 
-    degree_list = sim_graph.degree()
+    degree_list = sim_graph.degree().copy()
     for (node_key_val, node_degree) in degree_list:
       if (node_degree == 0):
         sim_graph.remove_node(node_key_val)
