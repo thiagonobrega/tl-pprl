@@ -1484,6 +1484,7 @@ def genG(plain_num_ent,encode_num_ent,
     
 
             #TODO: REVER VARIAVEIS
+            res_header_list = ['date','time','plain_dataset_name','plain_attr_list','plain_num_rec','encode_dataset_name','encode_attr_list','encode_num_rec','q_length','padded','sim_adjust_flag','regression_model','plain_sim_funct','enc_sim_func','min_sim','encode_method','bf_hash_type/tmh_num_hash_bits/cmh_max_rand_int','num_hash_funct','bf_len/tmh_num_hash_tables/cmh_num_hash_col','bf_encode/tmh_key_len', 'bf_harden/tmh_val_len','explained_var','min_abs_err','max_abs_err','avrg_abs_err','std_abs_err','mean_sqrd_err','mean_sqrd_lg_err','r_sqrd']
             #TODO: REVER SAIDA
             res_val_list = [today_str, now_str, plain_base_data_set_name, plain_attr_list_str, plain_num_rec_loaded,encode_base_data_set_name, encode_attr_list_str, encode_num_rec_loaded,q, str(padded_flag).lower(), sim_diff_adjust_flag, regre_model_str.lower(),plain_sim_funct_name, encode_sim_funct_name,min_sim, encode_method]
             if (encode_method == 'bf'):
@@ -1497,21 +1498,19 @@ def genG(plain_num_ent,encode_num_ent,
             
             res_val_list += list(eval_res_tuple)
     
-        #talvez identar isso para dentro
-        if (not os.path.isfile(regre_model_eval_res_file)):
-            res_header_list = ['date','time','plain_dataset_name','plain_attr_list','plain_num_rec','encode_dataset_name','encode_attr_list','encode_num_rec','q_length','padded','sim_adjust_flag','regression_model','plain_sim_funct','enc_sim_func','min_sim','encode_method','bf_hash_type/tmh_num_hash_bits/cmh_max_rand_int','num_hash_funct','bf_len/tmh_num_hash_tables/cmh_num_hash_col','bf_encode/tmh_key_len', 'bf_harden/tmh_val_len','explained_var','min_abs_err','max_abs_err','avrg_abs_err','std_abs_err','mean_sqrd_err','mean_sqrd_lg_err','r_sqrd']
-            write_reg_file = open(regre_model_eval_res_file, 'w')
-            csv_writer = csv.writer(write_reg_file)
-            csv_writer.writerow(res_header_list)
+            #REIDENTADO
+            if (not os.path.isfile(regre_model_eval_res_file)):
+              write_reg_file = open(regre_model_eval_res_file, 'w')
+              csv_writer = csv.writer(write_reg_file)
+              csv_writer.writerow(res_header_list)
+              logging.debug('Created new result file:', regre_model_eval_res_file)
        
-            logging.debug('Created new result file:', regre_model_eval_res_file)
-       
-        else:  # Append results to an existing file
-            write_reg_file = open(regre_model_eval_res_file, 'a')
-            csv_writer = csv.writer(write_reg_file)
+            else:  # Append results to an existing file
+              write_reg_file = open(regre_model_eval_res_file, 'a')
+              csv_writer = csv.writer(write_reg_file)
         
-        csv_writer.writerow(res_val_list)
-        write_reg_file.close()
+            csv_writer.writerow(res_val_list)
+            write_reg_file.close()
     #fim do else
     
     # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
