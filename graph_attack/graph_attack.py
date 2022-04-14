@@ -688,7 +688,8 @@ def build_regre_model(ba_sim_list, qg_sim_list, qg_num_q_gram_list,
     # Split the data for the training and testing samples
     x_train, x_test, y_train, y_test = train_test_split(x_val_array, 
                                                         y_val_array, 
-                                                        test_size=0.25, 
+                                                        test_size=0.25,
+                                                        stratify = y_val_array,
                                                         random_state=42)
     
     # Train the model
@@ -1430,6 +1431,7 @@ def genG(plain_num_ent,encode_num_ent,
         test_sim_regre_model(regre_model, ba_sim_list, qg_sim_list, qg_num_q_gram_list,
                             regre_model_str, encode_method)
     else:
+        regre_model_eval_res_file = 'graph_attack_regression_model_eval_res.csv'
         if(sim_diff_adjust_flag == True):
             regres_file_name = 'plain-encode-sim-%s-regression-scatter-%s-%s-%s-%d-%s-' % \
                        (regre_model_str, plain_base_data_set_name, encode_base_data_set_name,
@@ -1478,7 +1480,7 @@ def genG(plain_num_ent,encode_num_ent,
             
             # Write evaluation resuls to a csv file
             #
-            regre_model_eval_res_file = 'graph_attack_regression_model_eval_res.csv'
+            
     
     
             res_header_list = ['date','time','plain_dataset_name','plain_attr_list','plain_num_rec','encode_dataset_name','encode_attr_list','encode_num_rec','q_length','padded','sim_adjust_flag','regression_model','plain_sim_funct','enc_sim_func','min_sim','encode_method','bf_hash_type/tmh_num_hash_bits/cmh_max_rand_int','num_hash_funct','bf_len/tmh_num_hash_tables/cmh_num_hash_col','bf_encode/tmh_key_len', 'bf_harden/tmh_val_len','explained_var','min_abs_err','max_abs_err','avrg_abs_err','std_abs_err','mean_sqrd_err','mean_sqrd_lg_err','r_sqrd']
