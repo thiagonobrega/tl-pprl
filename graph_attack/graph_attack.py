@@ -1482,8 +1482,6 @@ def genG(plain_num_ent,encode_num_ent,
             #
             
     
-    
-            res_header_list = ['date','time','plain_dataset_name','plain_attr_list','plain_num_rec','encode_dataset_name','encode_attr_list','encode_num_rec','q_length','padded','sim_adjust_flag','regression_model','plain_sim_funct','enc_sim_func','min_sim','encode_method','bf_hash_type/tmh_num_hash_bits/cmh_max_rand_int','num_hash_funct','bf_len/tmh_num_hash_tables/cmh_num_hash_col','bf_encode/tmh_key_len', 'bf_harden/tmh_val_len','explained_var','min_abs_err','max_abs_err','avrg_abs_err','std_abs_err','mean_sqrd_err','mean_sqrd_lg_err','r_sqrd']
 
             #TODO: REVER VARIAVEIS
             #TODO: REVER SAIDA
@@ -1499,7 +1497,9 @@ def genG(plain_num_ent,encode_num_ent,
             
             res_val_list += list(eval_res_tuple)
     
+        #talvez identar isso para dentro
         if (not os.path.isfile(regre_model_eval_res_file)):
+            res_header_list = ['date','time','plain_dataset_name','plain_attr_list','plain_num_rec','encode_dataset_name','encode_attr_list','encode_num_rec','q_length','padded','sim_adjust_flag','regression_model','plain_sim_funct','enc_sim_func','min_sim','encode_method','bf_hash_type/tmh_num_hash_bits/cmh_max_rand_int','num_hash_funct','bf_len/tmh_num_hash_tables/cmh_num_hash_col','bf_encode/tmh_key_len', 'bf_harden/tmh_val_len','explained_var','min_abs_err','max_abs_err','avrg_abs_err','std_abs_err','mean_sqrd_err','mean_sqrd_lg_err','r_sqrd']
             write_reg_file = open(regre_model_eval_res_file, 'w')
             csv_writer = csv.writer(write_reg_file)
             csv_writer.writerow(res_header_list)
