@@ -1461,6 +1461,9 @@ def genG(plain_num_ent,encode_num_ent,
                 plot_data_name = '(EURO)'
                 if(num_attr == 4):
                     plot_title = 'FirstName, LastName, Street, Postcode'
+            else:
+              #TODO AJUSTAR COLOCAR NA CHAMADA DA FUNCAO
+              plot_data_name = '(Outro)'
             
             regre_model, eval_res_tuple = build_regre_model(ba_sim_list, qg_sim_list,
                                                     qg_num_q_gram_list,
