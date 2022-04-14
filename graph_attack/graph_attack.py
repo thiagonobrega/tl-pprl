@@ -1042,6 +1042,8 @@ def genG(plain_num_ent,encode_num_ent,
         common_rec_id_set={},#setar caso seja utilizado
         #nao sei o que e isso mas estava hardoced
         same_ba_blck = False,
+        #ploting
+        plot_diffsim_graph=False,
         #ajueste de similaridade
         sim_diff_interval_size = 0.05,
         sim_diff_adjust_flag=True):
@@ -1660,10 +1662,14 @@ def genG(plain_num_ent,encode_num_ent,
                              plain_sim_funct_name, encode_sim_funct_name,
                              min_sim, encode_method_str, today_str)
   
-    sim_diff_plot_file_name_adj = sim_diff_plot_file_name.replace('.eps',
-                                                        '-adjusted.eps')
+    if (plot_diffsim_graph):
+      sim_diff_plot_file_name_adj = sim_diff_plot_file_name.replace('.eps','-adjusted.eps')
+    else:
+      sim_diff_plot_file_name_adj=None
   
     sim_diff_interval_size = 0.05
+
+    
 
     QG_sim_graph.comp_sim_differences(encode_plain_node_val_dict,
                                     BA_sim_graph.sim_graph,
