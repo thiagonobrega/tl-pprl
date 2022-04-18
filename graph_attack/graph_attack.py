@@ -3226,11 +3226,11 @@ def step04(QG_sim_graph,BA_sim_graph,
             #
             sim_hash_match_sim=0, #all blocagem
             # blocagem
-            graph_block_hlsh_rel_sample_size=0,
-            graph_block_hlsh_num_sample=0,
+            graph_block_hlsh_rel_sample_size=1,
+            graph_block_hlsh_num_sample=1,
             #
-            plain_graph_num_node=0,
-            encode_graph_num_node=0,
+            plain_graph_num_node=1,
+            encode_graph_num_node=1,
             attack_res_file_name='ataque.csv',
             random_seed=101,
             feat_path = 'feats' + os.sep,

@@ -367,7 +367,11 @@ class CosineLSH():
     bit_sample_list = []
 
     for sample_num in range(hlsh_num_sample):
-      bit_sample_list.append(random.sample(range(bit_array_len),int(hlsh_sample_size)))
+      arrayb = []
+      for i in range(0,bit_array_len):
+        arrayb.append(int(i))
+
+      bit_sample_list.append(random.sample(arrayb,int(hlsh_sample_size)))
       if (len(bit_sample_list) > 1):
         assert bit_sample_list[-1] != bit_sample_list[-2]  # Check uniqueness
 
