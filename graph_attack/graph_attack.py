@@ -2836,8 +2836,10 @@ def get_conn_comp_intep_search(ba_conn_comp_dict, qg_conn_comp_dict,
 
 def random_graph_matching(edge_sim_conf_dict):
   
-  edges_list = edge_sim_conf_dict.keys()
-  edge_indices_list = [i for i in range(len(edges_list))]
+  # edges_list = edge_sim_conf_dict.keys()
+  # edge_indices_list = [i for i in range(len(edges_list))]
+  edges_list = list(edge_sim_conf_dict.keys())
+  edge_indices_list = [edges_list[i] for i in range(len(edges_list))]
   
   # randomly shuffle indices list 
   #
@@ -2857,7 +2859,8 @@ def random_graph_matching(edge_sim_conf_dict):
       
       random_sim_pair_dict[(qg_key, ba_key)] = edge_sim_conf_dict[(qg_key, ba_key)][0]
     
-    return random_sim_pair_dict
+  #alterado a identacao
+  return random_sim_pair_dict
 
 #----------------------------------------------------------------------
 
