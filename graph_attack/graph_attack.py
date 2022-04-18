@@ -3145,8 +3145,10 @@ def munkress_graph_matching(conn_comp_list, edge_sim_conf_norm_dict, weight_list
           if(weighted_sim_sum > max_val):
             max_pair = (qg_key, ba_key)
             max_val = weighted_sim_sum
+            munkress_sim_pair_dict[max_pair] = max_val
       
-      munkress_sim_pair_dict[max_pair] = max_val
+      # alterado a posicao
+      # munkress_sim_pair_dict[max_pair] = max_val
       continue
     
     pairs_dist_list = []
