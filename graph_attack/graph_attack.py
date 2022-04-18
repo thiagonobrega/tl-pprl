@@ -64,7 +64,7 @@ BF_HASH_FUNCT2 = hashlib.md5
 
 #
 PLT_PLOT_RATIO = 1.0
-FILE_FORMAT  = '.eps' #'.png'
+FILE_FORMAT  = '.png'#'.eps' #'.png'
 PLT_FONT_SIZE    = 20# 28 # used for axis lables and ticks
 LEGEND_FONT_SIZE = 20 # 28 # used for legends
 TITLE_FONT_SIZE  = 19 # 30 # used for plt title
@@ -1600,10 +1600,11 @@ def genG(plain_num_ent,encode_num_ent,
                        (regre_model_str, plain_base_data_set_name, encode_base_data_set_name,
                         plain_attr_list_str, plain_num_rec_loaded,
                         encode_attr_list_str) + \
-                       '%d-%d-%s-%s-%s-%.3f-%s-%s.eps' % \
+                       '%d-%d-%s-%s-%s-%.3f-%s-%s'% \
                        (encode_num_rec_loaded, q, str(padded_flag).lower(),
                         plain_sim_funct_name, encode_sim_funct_name,
                         min_sim, encode_method_str, today_str)
+            regres_file_name = regres_file_name+FILE_FORMAT
             
             num_attr = len(encode_attr_list_str.split('_'))
         
@@ -1818,13 +1819,14 @@ def genG(plain_num_ent,encode_num_ent,
                             (plain_base_data_set_name, encode_base_data_set_name,
                              plain_attr_list_str, plain_num_rec_loaded,
                              encode_attr_list_str) + \
-                            '%d-%d-%s-%s-%s-%.3f-%s-%s.eps' % \
+                            '%d-%d-%s-%s-%s-%.3f-%s-%s'% \
                             (encode_num_rec_loaded, q, str(padded_flag).lower(),
                              plain_sim_funct_name, encode_sim_funct_name,
                              min_sim, encode_method_str, today_str)
+    sim_diff_plot_file_name = sim_diff_plot_file_name+FILE_FORMAT
   
     if (plot_diffsim_graph):
-      sim_diff_plot_file_name_adj = sim_diff_plot_file_name.replace('.eps','-adjusted.eps')
+      sim_diff_plot_file_name_adj = sim_diff_plot_file_name.replace(FILE_FORMAT,'-adjusted'+FILE_FORMAT)
     else:
       sim_diff_plot_file_name_adj=None
   
@@ -1940,11 +1942,12 @@ def genG(plain_num_ent,encode_num_ent,
                               (plain_base_data_set_name, encode_base_data_set_name,
                                 plain_attr_list_str, plain_num_rec_loaded,
                                 encode_attr_list_str, encode_num_rec_loaded) + \
-                              '%d-%s-%s-%s-%s-%.3f-%s-%s.eps' % \
+                              '%d-%s-%s-%s-%s-%.3f-%s-%s'% \
                               (q, str(padded_flag).lower(), plain_sim_funct_name,
                                 str(sim_diff_adjust_flag).lower(),
                                 encode_sim_funct_name, min_sim, encode_method_str,
                                 today_str)
+    sim_histo_plot_file_name = sim_histo_plot_file_name + FILE_FORMAT 
     
     # Generate a list of similarities of all edges between records from the same
     # entities (not just q-gram or bit array values) and count the number of
@@ -2059,11 +2062,12 @@ def genG(plain_num_ent,encode_num_ent,
                               (plain_base_data_set_name, encode_base_data_set_name,
                                 plain_attr_list_str, plain_num_rec_loaded,
                                 encode_attr_list_str, encode_num_rec_loaded) + \
-                              '%d-%s-%s-%s-%s-%.3f-%s-%s.eps' % \
+                              '%d-%s-%s-%s-%s-%.3f-%s-%s'% \
                               (q, str(padded_flag).lower(), plain_sim_funct_name,
                                 str(sim_diff_adjust_flag).lower(),
                                 encode_sim_funct_name, min_sim, encode_method_str,
                                 today_str)
+    sim_diff_plot_file_name = sim_diff_plot_file_name+FILE_FORMAT
 
     #plot_save_sim_diff(plot_list_dict, sim_diff_plot_file_name,2,False)
 
@@ -2208,8 +2212,10 @@ def learn_embeddings(walks, num_dimensions, window_size, num_workers, num_iter):
   
   start_time = time.time()
   
-  walks = [map(str, walk) for walk in walks]
-  model = Word2Vec(walks, size=num_dimensions, window=window_size, min_count=0, sg=1, workers=num_workers, iter=num_iter)
+  # walks = [map(str, walk) for walk in walks]
+  walks = [list(map(str, walk)) for walk in walks]
+  # model = Word2Vec(walks, size=num_dimensions, window=window_size, min_count=0, sg=1, workers=num_workers, iter=num_iter)
+  model = Word2Vec(walks, vector_size=num_dimensions, window=window_size, min_count=0, sg=1, workers=num_workers,epochs=num_iter)
   
   learn_time = time.time() - start_time
   logging.debug('    Learning node embeddings took %.3f seconds' %learn_time)
@@ -2851,10 +2857,8 @@ def random_graph_matching(edge_sim_conf_dict):
   
   random_sim_pair_dict = {}
   
-  for edge_index in edge_indices_list:
-    
-    qg_key, ba_key = edges_list[edge_index]
-    
+  for qg_key, ba_key in edge_indices_list:
+    # qg_key, ba_key = edges_list[edge_index]    
     if(qg_key not in ident_qg_keys and 
        ba_key not in ident_ba_keys):
       
@@ -3322,12 +3326,14 @@ def step04(QG_sim_graph,BA_sim_graph,
     if (len(QG_conn_sim_graph.sim_graph.nodes()) <= MAX_DRAW_PLOT_NODE_NUM) and \
       (len(BA_conn_sim_graph.sim_graph.nodes()) <= MAX_DRAW_PLOT_NODE_NUM):
 
-      plain_graph_plot_file_name = 'plain-sim-graph-min_degr-%d-%s-%s.eps' % \
+      plain_graph_plot_file_name = 'plain-sim-graph-min_degr-%d-%s-%s'% \
                                   (graph_node_min_degr,
                                     plain_base_data_set_name, today_str)
-      encode_graph_plot_file_name = 'encode-sim-graph-min_degr-%d-%s-%s.eps' % \
+      plain_graph_plot_file_name = plain_graph_plot_file_name+FILE_FORMAT
+      encode_graph_plot_file_name = 'encode-sim-graph-min_degr-%d-%s-%s'% \
                                     (graph_node_min_degr,
                                     encode_base_data_set_name, today_str)
+      encode_graph_plot_file_name = encode_graph_plot_file_name+FILE_FORMAT
 
       plot_save_graph(QG_conn_sim_graph.sim_graph, plain_graph_plot_file_name,
                       min_sim)
@@ -3420,7 +3426,7 @@ def step04(QG_sim_graph,BA_sim_graph,
             qg_max_feat_array = numpy.zeros(num_dimensions)
             
             for qg_node_key in QG_conn_sim_graph.sim_graph.nodes():
-              node_embd_array = qg_embd[str(qg_node_key)]
+              node_embd_array = qg_embd.wv[str(qg_node_key)]
               qg_feat_dict[qg_node_key] = node_embd_array
               
               qg_min_feat_array = numpy.minimum(node_embd_array, qg_min_feat_array)
@@ -3475,7 +3481,8 @@ def step04(QG_sim_graph,BA_sim_graph,
             ba_max_feat_array = numpy.zeros(num_dimensions)
             
             for ba_node_key in BA_conn_sim_graph.sim_graph.nodes():
-              node_embd_array = ba_embd[str(ba_node_key)]
+              #TODO CONVERVETER PARA .wv
+              node_embd_array = ba_embd.wv[str(ba_node_key)]
               ba_feat_dict[ba_node_key] = node_embd_array
               
               ba_min_feat_array = numpy.minimum(node_embd_array, ba_min_feat_array)
@@ -3652,11 +3659,12 @@ def step04(QG_sim_graph,BA_sim_graph,
                           % (plain_base_data_set_name, encode_base_data_set_name,
                               plain_attr_list_str, plain_num_rec_loaded,
                               encode_attr_list_str, encode_num_rec_loaded) + \
-                            '%d-%s-%s-%s-%s-%.3f-%s-%s-%s-%d.eps' % \
+                            '%d-%s-%s-%s-%s-%.3f-%s-%s-%s-%d'% \
                             (q, str(padded_flag).lower(), plain_sim_funct_name,
                               str(sim_diff_adjust_flag).lower(),
                               encode_sim_funct_name, min_sim, encode_method_str,
                               today_str, graph_feat_select, use_num_feat)
+          feat_histo_plot_file_name = feat_histo_plot_file_name +FILE_FORMAT
 
           calc_plot_histogram_feat_vec_cosine_sim(plain_sim_graph,
                                                   encode_sim_graph,
@@ -3842,11 +3850,20 @@ def step04(QG_sim_graph,BA_sim_graph,
                 #
                 start_time = time.time()
                 
-                max_sim_val = max(cos_sim_list)
-                min_sim_val = min(cos_sim_list)
-                
-                max_poss_sim_conf_val = max_sim_val/min_sim_val
-                sim_conf_const = max_poss_sim_conf_val + 0.1
+                try:
+                  #
+                  max_sim_val = max(cos_sim_list)
+                  min_sim_val = min(cos_sim_list)
+                  max_poss_sim_conf_val = max_sim_val/min_sim_val
+                  sim_conf_const = max_poss_sim_conf_val + 0.1
+                except ValueError:
+                  #max() arg is an empty sequence
+                  #if cos_sim_list is empty
+                  max_sim_val = 0
+                  min_sim_val = 100
+                  max_poss_sim_conf_val = 0
+                  sim_conf_const = max_poss_sim_conf_val + 0.1
+
                 
                 degree_conf_val_list = []
                 sim_conf_val_list = []
@@ -3872,27 +3889,40 @@ def step04(QG_sim_graph,BA_sim_graph,
                   edge_sim_conf_dict[(qg_key,ba_key)] = [cos_sim, sim_conf, degree_conf]
                   
                   
-                logging.debug(' Similarity confidence distribution')
-                logging.debug('  Min/Max/Average/Std: %.3f/%.3f/%.3f/%.3f' %(min(sim_conf_val_list), max(sim_conf_val_list), 
-                                                                    numpy.mean(sim_conf_val_list), numpy.std(sim_conf_val_list))
-                )
-                logging.debug('')
+                #TODO: ARRUMAR ISSO, COLOCAR APOS A NORMALIZACAO
+                # logging.debug(' Similarity confidence distribution')
+                # logging.debug('  Min/Max/Average/Std: %.3f/%.3f/%.3f/%.3f' %(min(sim_conf_val_list), max(sim_conf_val_list), 
+                #                                                     numpy.mean(sim_conf_val_list), numpy.std(sim_conf_val_list))
+                # )
+                # logging.debug('')
                 
-                logging.debug(' Degree confidence distribution')
-                logging.debug('  Min/Max/Average/Std: %.3f/%.3f/%.3f/%.3f' %(min(degree_conf_val_list), max(degree_conf_val_list), 
-                                                                    numpy.mean(degree_conf_val_list), numpy.std(degree_conf_val_list))
-                )
-                logging.debug('')
+                # logging.debug(' Degree confidence distribution')
+                # logging.debug('  Min/Max/Average/Std: %.3f/%.3f/%.3f/%.3f' %(min(degree_conf_val_list), max(degree_conf_val_list), 
+                #                                                     numpy.mean(degree_conf_val_list), numpy.std(degree_conf_val_list))
+                # )
+                # logging.debug('')
                 
                 # Normalise confidence values
                 #
-                max_sim_conf = max(sim_conf_val_list)
-                min_sim_conf = min(sim_conf_val_list)
-                sim_conf_diff = max_sim_conf - min_sim_conf
+
+                try:
+                  max_sim_conf = max(sim_conf_val_list)
+                  min_sim_conf = min(sim_conf_val_list)
+                  sim_conf_diff = max_sim_conf - min_sim_conf
+                except ValueError:
+                  max_sim_conf = 0
+                  min_sim_conf = 0
+                  sim_conf_diff = 0
+
                 
-                max_degree_conf = max(degree_conf_val_list)
-                min_degree_conf = min(degree_conf_val_list)
-                degree_conf_diff = max_degree_conf - min_degree_conf
+                try:
+                  max_degree_conf = max(degree_conf_val_list)
+                  min_degree_conf = min(degree_conf_val_list)
+                  degree_conf_diff = max_degree_conf - min_degree_conf
+                except ValueError:
+                  max_degree_conf = 0
+                  min_degree_conf = 0
+                  degree_conf_diff = 0
                 
                 degree_conf_norm_val_list = []
                 sim_conf_norm_val_list = []
@@ -3910,8 +3940,14 @@ def step04(QG_sim_graph,BA_sim_graph,
                   sim_conf = sim_conf_val_list[1]
                   degree_conf = sim_conf_val_list[2]
                   
-                  norm_sim_conf = (sim_conf - min_sim_conf)/sim_conf_diff
-                  norm_degree_conf = (degree_conf - min_degree_conf)/degree_conf_diff
+                  try:
+                    norm_sim_conf = (sim_conf - min_sim_conf)/sim_conf_diff
+                  except ZeroDivisionError:
+                    norm_sim_conf = 0
+                  try:
+                    norm_degree_conf = (degree_conf - min_degree_conf)/degree_conf_diff
+                  except ZeroDivisionError:
+                    norm_degree_conf = 0
                   
                   degree_conf_norm_val_list.append(norm_degree_conf)
                   sim_conf_norm_val_list.append(norm_sim_conf)
@@ -3939,20 +3975,21 @@ def step04(QG_sim_graph,BA_sim_graph,
                   qg_conn_comp_dict[qg_key] = ba_sim_dict
                 
                 
-                logging.debug(' Normalised similarity confidence distribution')
-                logging.debug('  Min/Max/Average/Std: %.3f/%.3f/%.3f/%.3f' %(min(sim_conf_norm_val_list), 
-                                                                    max(sim_conf_norm_val_list), 
-                                                                    numpy.mean(sim_conf_norm_val_list), 
-                                                                    numpy.std(sim_conf_norm_val_list))
-                )
-                logging.debug('')
+                # TODO DESCOMENTAR
+                # logging.debug(' Normalised similarity confidence distribution')
+                # logging.debug('  Min/Max/Average/Std: %.3f/%.3f/%.3f/%.3f' %(min(sim_conf_norm_val_list), 
+                #                                                     max(sim_conf_norm_val_list), 
+                #                                                     numpy.mean(sim_conf_norm_val_list), 
+                #                                                     numpy.std(sim_conf_norm_val_list))
+                # )
+                # logging.debug('')
                 
-                logging.debug(' Normalised degree confidence distribution')
-                logging.debug('  Min/Max/Average/Std: %.3f/%.3f/%.3f/%.3f' %(min(degree_conf_norm_val_list), 
-                                                                    max(degree_conf_norm_val_list), 
-                                                                    numpy.mean(degree_conf_norm_val_list), 
-                                                                    numpy.std(degree_conf_norm_val_list))
-                )
+                # logging.debug(' Normalised degree confidence distribution')
+                # logging.debug('  Min/Max/Average/Std: %.3f/%.3f/%.3f/%.3f' %(min(degree_conf_norm_val_list), 
+                #                                                     max(degree_conf_norm_val_list), 
+                #                                                     numpy.mean(degree_conf_norm_val_list), 
+                #                                                     numpy.std(degree_conf_norm_val_list))
+                # )
                 
                 conf_cal_time = time.time() - start_time
                 
@@ -4103,30 +4140,30 @@ def step04(QG_sim_graph,BA_sim_graph,
                       
                       if (rank_i < 5):  # Only print the first 10 pairs
       
-                        logging.debug('      Node pair with %d highest similarity (or ' % \
+                        logging.info('      Node pair with %d highest similarity (or ' % \
                               (rank_i) + 'distance): %.5f' % (final_sim)
                         )
-                        logging.debug('        Plain-text entity identifiers:', \
-                              sorted(ent_id_set1)
+                        logging.info('        Plain-text entity identifiers:' + 
+                              str(sorted(ent_id_set1))
                         )
-                        logging.debug('          Plain-text record values:', \
-                              sorted(org_val_set1)
+                        logging.info('          Plain-text record values:' +
+                              str(sorted(org_val_set1))
                         )
-                        logging.debug('        Encoded entity identifiers:', \
-                              sorted(ent_id_set2)
+                        logging.info('        Encoded entity identifiers:' +
+                              str(sorted(ent_id_set2))
                         )
-                        logging.debug('          Encoded record values:', \
-                              sorted(org_val_set2)
+                        logging.info('          Encoded record values:' + 
+                              str(sorted(org_val_set2))
                         )
                         logging.debug('      Original feature vectors:')
-                        logging.debug('       ', qg_feat_dict[node_key_val1])
-                        logging.debug('       ', ba_feat_dict[node_key_val2])
+                        logging.debug('       ', str(qg_feat_dict[node_key_val1]) )
+                        logging.debug('       ', str( ba_feat_dict[node_key_val2]) )
                         logging.debug('      Original normalised feature vectors:')
-                        logging.debug('       ', norm_qg_feat_dict[node_key_val1])
-                        logging.debug('       ', norm_ba_feat_dict[node_key_val2])
+                        logging.debug('       ', str( norm_qg_feat_dict[node_key_val1]) )
+                        logging.debug('       ', str( norm_ba_feat_dict[node_key_val2]) )
                         logging.debug('      Selected feature vectors:')
-                        logging.debug('       ', sel_qg_feat_dict[node_key_val1])
-                        logging.debug('       ', sel_ba_feat_dict[node_key_val2])
+                        logging.debug('       ', str( sel_qg_feat_dict[node_key_val1]) )
+                        logging.debug('       ', str( sel_ba_feat_dict[node_key_val2]) )
                         logging.debug('')
       
                       # Get the first identifiers from these two sets
@@ -4175,9 +4212,9 @@ def step04(QG_sim_graph,BA_sim_graph,
       
                       rank_i += 1
                     
-                    logging.debug('  Number of encode records identified correctly: %d ' %len(ident_corr_id_set))
-                    logging.debug('  Number of encode records identified wrongly: %d' %len(ident_wrng_id_set))
-                    logging.debug('')
+                    logging.info('  Number of encode records identified correctly: %d ' %len(ident_corr_id_set))
+                    logging.info('  Number of encode records identified wrongly: %d' %len(ident_wrng_id_set))
+                    logging.info('')
                     
                     logging.debug('  Ranks of %d true matches:' % \
                           (len(true_match_rank_list)), true_match_rank_list[:10], \
@@ -4324,7 +4361,7 @@ def step04(QG_sim_graph,BA_sim_graph,
                       csv_writer = csv.writer(attck_write_file)
                       csv_writer.writerow(new_attck_res_header_list)
                       
-                      logging.debug('Created new result file: ' + str(attack_res_file_name))
+                      logging.info('Created new result file: ' + str(attack_res_file_name))
                       
                     else:  # Append results to an existing file
                       attck_write_file = open(attack_res_file_name, 'a')
@@ -4333,7 +4370,7 @@ def step04(QG_sim_graph,BA_sim_graph,
                     csv_writer.writerow(new_attck_res_val_list)
                     attck_write_file.close()
                     
-                    logging.debug(' Wrote result line:' + str(new_attck_res_val_list))
+                    logging.info(' Wrote result line:' + str(new_attck_res_val_list))
 
     pass
 
