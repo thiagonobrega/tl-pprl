@@ -27,6 +27,7 @@ import logging
 import bitarray
 # import itertools
 import numpy
+from scipy.optimize import linear_sum_assignment
 # import numpy.linalg
 # import scipy.stats
 # import scipy.spatial.distance
