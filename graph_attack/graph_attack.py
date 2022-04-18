@@ -190,8 +190,7 @@ def load_data_set(data_set_name, attr_num_list, ent_id_col, soundex_attr_val_lis
     count_dist_dict[rec_tuple_count] = \
                        count_dist_dict.get(rec_tuple_count, 0) + 1
 
-  logging.debug('  Count distribution of value occurrences:', \
-        sorted(count_dist_dict.items())
+  logging.debug('  Count distribution of value occurrences: ' + str(sorted(count_dist_dict.items()) )
   )
 
   rec_tuple_count_dict.clear()  # Not needed anymore
