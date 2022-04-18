@@ -41,7 +41,8 @@ from sklearn.preprocessing import PolynomialFeatures
 
 import networkx
 # import networkx.drawing
-import node2vec
+# import node2vec
+from graph_attack.utils import node2vec
 from gensim.models import Word2Vec
 
 
