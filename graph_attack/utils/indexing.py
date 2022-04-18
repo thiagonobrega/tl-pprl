@@ -625,7 +625,7 @@ class CosineLSH():
       num_all_sim_edge =  0  # Number of all edges
       num_high_sim_edge = 0  # Similarity of at least edge_min_sim+min_sim_tol
       for key_val2 in plain_sim_graph.neighbors(key_val1):
-        edge_sim = plain_sim_graph.edge[key_val1][key_val2]['sim']
+        edge_sim = plain_sim_graph.edges[key_val1,key_val2]['sim']
         max_edge_sim = max(edge_sim, max_edge_sim)
         if (edge_sim >= min_high_sim_val):
           num_high_sim_edge += 1
@@ -638,7 +638,7 @@ class CosineLSH():
       num_all_sim_edge =  0  # Number of all edges
       num_high_sim_edge = 0  # Similarity of at least edge_min_sim+min_sim_tol
       for key_val2 in encode_sim_graph.neighbors(key_val1):
-        edge_sim = encode_sim_graph.edge[key_val1][key_val2]['sim']
+        edge_sim = encode_sim_graph.edges[key_val1,key_val2]['sim']
         max_edge_sim = max(edge_sim, max_edge_sim)
         if (edge_sim >= min_high_sim_val):
           num_high_sim_edge += 1
@@ -843,11 +843,11 @@ class CosineLSH():
 
       node_sim_list1 = []  # Get the edge similarities for node 1
       for (eval1,eval2) in plain_sim_graph.edges(val1):
-        node_sim_list1.append(plain_sim_graph.edge[eval1][eval2]['sim'])
+        node_sim_list1.append(plain_sim_graph.edges[eval1,eval2]['sim'])
 
       node_sim_list2 = []  # Get the edge similarities for node 2
       for (eval1,eval2) in encode_sim_graph.edges(val2):
-        node_sim_list2.append(encode_sim_graph.edge[eval1][eval2]['sim'])
+        node_sim_list2.append(encode_sim_graph.edges[eval1,eval2]['sim'])
 
 #      print 'pt:', node_sim_list1
 #      print 'en:', node_sim_list2
