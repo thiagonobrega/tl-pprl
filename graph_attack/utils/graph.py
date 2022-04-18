@@ -259,7 +259,7 @@ class SimGraph():
     else:
       logging.debug('Similarity graph characteristics:')
     
-    logging.debug('  Number of nodes:    ', len(sim_graph.nodes()))
+    logging.debug('  Number of nodes:    ' + str(len(sim_graph.nodes())) )
 
     # Get a distribution of the node frequencies
     # (keys will be counts, values how many nodes have that count)
@@ -268,12 +268,12 @@ class SimGraph():
     for node_key_val in sim_graph.nodes():
       node_freq = len(sim_graph.node[node_key_val]['ent_id_set'])
       node_freq_dict[node_freq] = node_freq_dict.get(node_freq, 0) + 1
-    logging.debug('    Distribution of node frequencies:', \
-          sorted(node_freq_dict.items()))
+    logging.debug('    Distribution of node frequencies:'+str(sorted(node_freq_dict.items()))
+    )
 
     node_freq_dict.clear()  # Not needed anymore
 
-    logging.debug('  Number of all edges:', len(sim_graph.edges()))
+    logging.debug('  Number of all edges: ' + str(len(sim_graph.edges())) )
 
     # Count the number of singletons (identifiers with no edges)
     #
@@ -284,7 +284,7 @@ class SimGraph():
     num_singleton =         sim_graph_degree_list.count(0)
     sim_graph_degree_list = []  # Not needed anymore
 
-    logging.debug('    Number of singleton nodes:', num_singleton)
+    logging.debug('    Number of singleton nodes:' +  str(num_singleton))
 
     # Calculate number of edges and singletons for the given similarity
     # thresholds
@@ -298,7 +298,7 @@ class SimGraph():
         for (node_key_val1,node_key_val2) in sim_graph.edges():
           if (sim_graph.edges[node_key_val1,node_key_val2]['sim'] >= min_sim):
             num_min_sim_edges += 1
-        logging.debug('    Number of edges:          ', num_min_sim_edges)
+        logging.debug('    Number of edges:          '+  str(num_min_sim_edges))
 
         # For this minimum similarity, get the distribution of the degrees of
         # all nodes
@@ -316,10 +316,10 @@ class SimGraph():
               node_degree += 1
           min_sim_degree_dist_dict[node_degree] = \
                      min_sim_degree_dist_dict.get(node_degree, 0) + 1
-        logging.debug('    Degree distribution:      ', \
-              sorted(min_sim_degree_dist_dict.items())[:20], '.....', \
-              sorted(min_sim_degree_dist_dict.items())[-20:]
-        )
+        # logging.debug('    Degree distribution:      ', \
+        #       sorted(min_sim_degree_dist_dict.items())[:20], '.....', \
+        #       sorted(min_sim_degree_dist_dict.items())[-20:]
+        # )
 
         min_sim_degree_dist_dict.clear()  # Not needed anymore
       
@@ -341,10 +341,10 @@ class SimGraph():
           conn_comp_size = len(conn_comp)
           conn_comp_size_dist_dict[conn_comp_size] = \
                    conn_comp_size_dist_dict.get(conn_comp_size, 0) + 1        
-        logging.debug('    Number of connected components:', len(conn_comp_list))
-        logging.debug('      Size of connected components distribution:', \
-              sorted(conn_comp_size_dist_dict.items())
-        )
+        logging.debug('    Number of connected components: ' + str(len(conn_comp_list)) )
+        # logging.debug('      Size of connected components distribution:', \
+        #       sorted(conn_comp_size_dist_dict.items())
+        # )
 
         logging.debug('    Number of singletons: %d' % \
               (conn_comp_size_dist_dict.get(1, 0))
@@ -671,9 +671,9 @@ class SimGraph():
     sim_graph_pair_dict.clear()  # Not needed anymore
 
     logging.debug('Using %d common edges to calculate similarity differences' % \
-          (len(common_sim_graph_pair_dict)), num_samples
+          len(common_sim_graph_pair_dict)
     )
-    logging.debug('  Using similarity intervals:', sim_interval_list)
+    # logging.debug('  Using similarity intervals:', sim_interval_list)
 
     # If a plot is to be generated create lists of x- and y values for plotting
     #
@@ -1249,9 +1249,9 @@ class SimGraph():
     logging.debug('Generating %d features per graph node' % (num_feat) + \
           ' for %d nodes' % (sim_graph.number_of_nodes())
     )
-    logging.debug('  Minimum similarities to consider:', str(min_sim_list))
-    logging.debug('  Minimum node degree required:    ', min_node_degree)
-    logging.debug('  Features generated:', feat_name_list)
+    logging.debug('  Minimum similarities to consider:' + str(min_sim_list))
+    logging.debug('  Minimum node degree required:    ' +  str(min_node_degree))
+    logging.debug('  Features generated:' +  str(feat_name_list) )
 
     node_feat_dict = {}  # One list of features per node
 
@@ -1264,7 +1264,7 @@ class SimGraph():
 
       # Get the node's neighbours
       #
-      node_neigh_val_list = sim_graph.neighbors(node_key_val)
+      node_neigh_val_list = list(sim_graph.neighbors(node_key_val))
 
       if (len(node_neigh_val_list) < min_node_degree):
         num_nodes_too_low_degree += 1
@@ -1334,8 +1334,9 @@ class SimGraph():
             for neigh_key_val in node_neigh_val_set:
               node_neigh_degree = sim_graph.degree(neigh_key_val)
               node_neigh_log_degree = int(math.log(node_neigh_degree, 2))
+              #TODO: alterei o assert
               assert (node_neigh_log_degree >= 0) and \
-                      (node_neigh_log_degree < degree_hist_len)
+                      (node_neigh_log_degree <= degree_hist_len)
               node_feat_array[next_feat + node_neigh_log_degree] += 1
 
           next_feat += degree_hist_len  # Advance over the degree histrogram
@@ -1361,8 +1362,9 @@ class SimGraph():
             for hop2_neigh_key_val in hop2_neigh_val_set:
               node_neigh_degree = sim_graph.degree(hop2_neigh_key_val)
               node_neigh_log_degree = int(math.log(node_neigh_degree, 2))
+              #TODO: modifiquei o assert
               assert (node_neigh_log_degree >= 0) and \
-                      (node_neigh_log_degree < degree_hist_len)
+                      (node_neigh_log_degree <= degree_hist_len), 'Assert:: ' + str(node_neigh_log_degree) + ' - ' + str(degree_hist_len)
               node_feat_array[next_feat + node_neigh_log_degree] += 1
 
           next_feat += degree_hist_len  # Advance over the degree histrogram
@@ -1464,8 +1466,8 @@ class SimGraph():
     logging.debug('    Number of nodes with a degree below %d: %d' % \
           (min_node_degree, num_nodes_too_low_degree)
     )
-    logging.debug('    Minimum feature values:', min_feat_array)
-    logging.debug('    Maximum feature values:', max_feat_array)
+    logging.debug('    Minimum feature values:' + str(min_feat_array))
+    logging.debug('    Maximum feature values:' + str(max_feat_array))
     logging.debug('')
 
     assert len(node_feat_dict) + num_nodes_too_low_degree == \
@@ -1588,8 +1590,8 @@ class SimGraph():
       min_feat_array = numpy.minimum(node_feat_array, min_feat_array)
       max_feat_array = numpy.maximum(node_feat_array, max_feat_array)
 
-    logging.debug('  Normalised minimum feature values:', min_feat_array)
-    logging.debug('  Normalised maximum feature values:', max_feat_array)
+    logging.debug('  Normalised minimum feature values:' + str(min_feat_array) )
+    logging.debug('  Normalised maximum feature values:' + str(max_feat_array) )
     logging.debug('')
 
     assert min(min_feat_array) >= 0.0, min_feat_array
