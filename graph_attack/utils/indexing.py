@@ -354,6 +354,10 @@ class CosineLSH():
     """
 
     start_time = time.time()
+    
+    hlsh_sample_size = int(hlsh_sample_size)
+    hlsh_num_sample = int(hlsh_num_sample)
+    bit_array_len = int(bit_array_len)
 
     plain_sim_block_dict =  {}  # The dictionaries to be returned
     encode_sim_block_dict = {}
