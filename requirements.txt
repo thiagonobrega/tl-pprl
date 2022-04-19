@@ -18,6 +18,7 @@ scikit-learn>=0.22.1
 ###
 # need to be ported to a newer networkx
 networkx==2.1
-node2vec
+# node2vec
+gensim==4.1.2
 # gensim.models
 # binascii
