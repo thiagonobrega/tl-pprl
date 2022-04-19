@@ -685,18 +685,19 @@ def build_regre_model(ba_sim_list, qg_sim_list, qg_num_q_gram_list,
       
     logging.debug('Traning the linear regression model')
     
+    
     if(encode_method in ['2sh','tmh']):
       x_val_array = numpy.reshape(x_val_list,(-1,1))
       y_val_array = numpy.reshape(y_val_list,(-1,1))
     else:
-      x_val_array = numpy.array(zip(x_val_list,q_val_list))
+      x_val_array = numpy.array(list(zip(x_val_list,q_val_list)))
       y_val_array = numpy.reshape(y_val_list,(-1,1))
   
     # Split the data for the training and testing samples
     x_train, x_test, y_train, y_test = train_test_split(x_val_array, 
                                                         y_val_array, 
                                                         test_size=0.25,
-                                                        stratify = y_val_array,
+                                                        # stratify = y_val_array,
                                                         random_state=42)
     
     # Train the model
@@ -753,8 +754,11 @@ def build_regre_model(ba_sim_list, qg_sim_list, qg_num_q_gram_list,
   y_p_new = []
   y_t_new = []
   
-  y_predict = list(zip(*y_predict)[0])
-  y_test = list(zip(*y_test)[0])
+  #ALTERADO alterado
+  # y_predict = list(zip(*y_predict)[0])
+  # y_test = list(zip(*y_test)[0])
+  y_predict = list(zip(*y_predict))[0]
+  y_test = list(zip(*y_test))[0]
   
   for i, y_p in enumerate(y_predict):
     y_t = y_test[i]
@@ -810,7 +814,7 @@ def build_regre_model(ba_sim_list, qg_sim_list, qg_num_q_gram_list,
       else:
         x_plot_train, q_val_train = zip(*x_train)
         x_plot_test, q_val_test = zip(*x_test)
-        y_train = list(zip(*y_train)[0])
+        y_train = list(zip(*y_train))[0]
     else:
       x_plot_train = x_train
       x_plot_test = x_test
