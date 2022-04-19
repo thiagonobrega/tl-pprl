@@ -2030,11 +2030,18 @@ def genG(plain_num_ent,encode_num_ent,
           sim_diff = qg_edge_dict[ent_id_pair] - ba_edge_dict[ent_id_pair]
           edge_sim_diff_list.append(sim_diff)
 
-      sim_diff_min = numpy.min(edge_sim_diff_list)
-      sim_diff_avr = numpy.mean(edge_sim_diff_list)
-      sim_diff_std = numpy.std(edge_sim_diff_list)
-      sim_diff_med = numpy.median(edge_sim_diff_list)
-      sim_diff_max = numpy.max(edge_sim_diff_list)
+      if len(edge_sim_diff_list) > 0:
+        sim_diff_min = numpy.min(edge_sim_diff_list)
+        sim_diff_avr = numpy.mean(edge_sim_diff_list)
+        sim_diff_std = numpy.std(edge_sim_diff_list)
+        sim_diff_med = numpy.median(edge_sim_diff_list)
+        sim_diff_max = numpy.max(edge_sim_diff_list)
+      else:
+        sim_diff_min = 0
+        sim_diff_avr = 0
+        sim_diff_std = 0
+        sim_diff_med = 0
+        sim_diff_max = 0
 
       plot_list_dict[check_min_sim] = edge_sim_diff_list
 
