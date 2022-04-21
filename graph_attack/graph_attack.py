@@ -2552,6 +2552,12 @@ def calc_plot_histogram_feat_vec_cosine_sim(sim_graph1, sim_graph2,
     non_match_y_val_list.append(count)
 
 #  min_count = min(min(match_y_val_list), min(non_match_y_val_list))
+  if len(match_y_val_list) == 0:
+    match_y_val_list = [0]
+
+  if len(non_match_y_val_list) == 0:
+    non_match_y_val_list = [0]
+
   max_count = max(max(match_y_val_list), max(non_match_y_val_list))
   min_sim =   min(min(match_x_val_list), min(non_match_x_val_list))
   max_sim =   max(max(match_x_val_list), max(non_match_x_val_list))
