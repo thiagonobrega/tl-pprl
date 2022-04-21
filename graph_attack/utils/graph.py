@@ -1335,8 +1335,8 @@ class SimGraph():
               node_neigh_degree = sim_graph.degree(neigh_key_val)
               node_neigh_log_degree = int(math.log(node_neigh_degree, 2))
               #TODO: alterei o assert
-              assert (node_neigh_log_degree >= 0) and \
-                      (node_neigh_log_degree <= degree_hist_len)
+              # assert (node_neigh_log_degree >= 0) and \
+              #         (node_neigh_log_degree <= degree_hist_len)
               node_feat_array[next_feat + node_neigh_log_degree] += 1
 
           next_feat += degree_hist_len  # Advance over the degree histrogram
@@ -1363,8 +1363,8 @@ class SimGraph():
               node_neigh_degree = sim_graph.degree(hop2_neigh_key_val)
               node_neigh_log_degree = int(math.log(node_neigh_degree, 2))
               #TODO: modifiquei o assert
-              assert (node_neigh_log_degree >= 0) and \
-                      (node_neigh_log_degree <= degree_hist_len), 'Assert:: ' + str(node_neigh_log_degree) + ' - ' + str(degree_hist_len)
+              # assert (node_neigh_log_degree >= 0) and \
+              #         (node_neigh_log_degree <= degree_hist_len), 'Assert:: ' + str(node_neigh_log_degree) + ' - ' + str(degree_hist_len)
               node_feat_array[next_feat + node_neigh_log_degree] += 1
 
           next_feat += degree_hist_len  # Advance over the degree histrogram
