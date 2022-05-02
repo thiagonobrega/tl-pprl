@@ -130,7 +130,7 @@ def load_data_set(data_set_name, attr_num_list, ent_id_col, soundex_attr_val_lis
     header_list = next(csv_reader) # testar
     # csv_reader.next()
 
-    logging.debug('File header line:', header_list)
+    logging.debug('File header line: ' str(header_list))
     logging.debug('  Attributes to be used:')
     for attr_num in attr_num_list:
       logging.debug(header_list[attr_num])
@@ -483,7 +483,7 @@ def encode_ds(encode_q_gram_dict,encode_attr_list,encode_rec_attr_val_dict,
 
     logging.debug('')
     logging.debug('Time for hashing the encode data set: %.2f sec' % (hashing_time) )
-    logging.debug('  Number of records hashed:', len(encode_hash_dict) )
+    logging.debug('  Number of records hashed: %.2f' % len(encode_hash_dict) )
     logging.debug('')
 
     # Check which entity identifiers occur in both data sets
