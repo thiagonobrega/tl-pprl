@@ -28,8 +28,9 @@ def showPredictionsSummary(Y):
 def calcularTamanho(nm, pm):
     '''
      Metodo para calcular o tamanho do dataset para o metodo abaixo
-    :param nm:
-    :param pm:
+     
+    :param nm: numero de matches
+    :param pm: percentual
     :return:
     '''
     assert pm < 1
@@ -150,3 +151,7 @@ def generate_logs_s2(_y, _ty, model_s1='Logistic'):
             's2_predicted_1': nY_b.get(1, 0)
             }
     return base
+
+###
+### 
+###
