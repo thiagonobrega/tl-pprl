@@ -3361,6 +3361,7 @@ def step04(QG_sim_graph,BA_sim_graph,
     # Loop over lists with different similarities to be used to generate the
     # node features
     #
+    #TODO: Paralelizar aqui
     for (graph_sim_list_name, sim_list) in graph_sim_list:
 
       # Loop over different sets of node features
