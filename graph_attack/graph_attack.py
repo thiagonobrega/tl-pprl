@@ -130,7 +130,7 @@ def load_data_set(data_set_name, attr_num_list, ent_id_col, soundex_attr_val_lis
     header_list = next(csv_reader) # testar
     # csv_reader.next()
 
-    logging.debug('File header line: ' str(header_list))
+    logging.debug('File header line: ' + str(header_list))
     logging.debug('  Attributes to be used:')
     for attr_num in attr_num_list:
       logging.debug(header_list[attr_num])
