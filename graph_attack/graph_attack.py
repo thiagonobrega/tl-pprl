@@ -4234,10 +4234,9 @@ def step04(QG_sim_graph,BA_sim_graph,
                     logging.info('  Number of encode records identified wrongly: %d' %len(ident_wrng_id_set))
                     logging.info('')
                     
-                    logging.debug('  Ranks of %d true matches:' % \
-                          (len(true_match_rank_list)), true_match_rank_list[:10], \
-                          '...', true_match_rank_list[-10:]
-                    )
+                    logging.debug('  Ranks of %d true matches:' % (len(true_match_rank_list)) )
+                    logging.debug( str(true_match_rank_list[:10]) )
+                    logging.debug( str(true_match_rank_list[-10:]) )
                     logging.debug('')
       
                     logging.debug('  Matching accuracy (based on true matches):')
