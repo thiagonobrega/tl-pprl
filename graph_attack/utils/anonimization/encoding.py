@@ -405,7 +405,7 @@ class RecordBFEncoding():
 
       # Generate a permutation list using random shuffling of bit positions
       #
-      perm_pos_list = range(rbf_bf_len)
+      perm_pos_list = list(range(rbf_bf_len))
       random.shuffle(perm_pos_list)
       self.perm_pos_list = perm_pos_list
 
