@@ -1589,7 +1589,7 @@ def genG(plain_num_ent,encode_num_ent,
     regre_file_name = regre_file_str + '.sav'
     regre_file_name = graph_path + regre_file_name
     if (os.path.isfile(regre_file_name)):
-        logging.debug('Load regression model from saved file:', regre_file_name)
+        logging.debug('Load regression model from saved file:' + str(regre_file_name))
         logging.debug('')
         regre_model = pickle.load(open(regre_file_name, 'rb'))
     
@@ -1671,7 +1671,7 @@ def genG(plain_num_ent,encode_num_ent,
               write_reg_file = open(regre_model_eval_res_file, 'w')
               csv_writer = csv.writer(write_reg_file)
               csv_writer.writerow(res_header_list)
-              logging.debug('Created new result file:', regre_model_eval_res_file)
+              logging.debug('Created new result file:' +  str(regre_model_eval_res_file))
        
             else:  # Append results to an existing file
               write_reg_file = open(regre_model_eval_res_file, 'a')
@@ -1913,7 +1913,7 @@ def genG(plain_num_ent,encode_num_ent,
           csv_writer = csv.writer(write_blck_file)
           csv_writer.writerow(blck_res_header_list)
           
-          logging.debug('Created new result file:', blocking_alignment_res_file)
+          logging.debug('Created new result file:' +  str(blocking_alignment_res_file) )
           
         else:  # Append results to an existing file
           write_blck_file = open(blocking_alignment_res_file, 'a')
@@ -2203,8 +2203,8 @@ def genG(plain_num_ent,encode_num_ent,
                     encode_graph_num_node, qg_graph_gen_time, ba_graph_gen_time, \
                     qg_graph_num_edges, ba_graph_num_edges, \
                     qg_graph_num_singleton, ba_graph_num_singleton)
-      logging.debug('######## load:', header_line)
-      logging.debug('######## load:', result_line)
+      logging.debug('######## load:' + str(header_line) )
+      logging.debug('######## load:' + str(result_line) )
       logging.debug('########')
 
 
@@ -4174,14 +4174,14 @@ def step04(QG_sim_graph,BA_sim_graph,
                               str(sorted(org_val_set2))
                         )
                         logging.debug('      Original feature vectors:')
-                        logging.debug('       ', str(qg_feat_dict[node_key_val1]) )
-                        logging.debug('       ', str( ba_feat_dict[node_key_val2]) )
+                        logging.debug('       ' + str(qg_feat_dict[node_key_val1]) )
+                        logging.debug('       ' +  str( ba_feat_dict[node_key_val2]) )
                         logging.debug('      Original normalised feature vectors:')
-                        logging.debug('       ', str( norm_qg_feat_dict[node_key_val1]) )
-                        logging.debug('       ', str( norm_ba_feat_dict[node_key_val2]) )
+                        logging.debug('       ' + str( norm_qg_feat_dict[node_key_val1]) )
+                        logging.debug('       ' + str( norm_ba_feat_dict[node_key_val2]) )
                         logging.debug('      Selected feature vectors:')
-                        logging.debug('       ', str( sel_qg_feat_dict[node_key_val1]) )
-                        logging.debug('       ', str( sel_ba_feat_dict[node_key_val2]) )
+                        logging.debug('       ' + str( sel_qg_feat_dict[node_key_val1]) )
+                        logging.debug('       ' + str( sel_ba_feat_dict[node_key_val2]) )
                         logging.debug('')
       
                       # Get the first identifiers from these two sets
