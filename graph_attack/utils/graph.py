@@ -644,9 +644,12 @@ class SimGraph():
       #
       if (len(str1) > 0) and (len(str2) > 0):
         rec_pair_dict_key = tuple(sorted([str1, str2]))
-        assert rec_pair_dict_key not in sim_graph_pair_dict
-        sim_graph_pair_dict[rec_pair_dict_key] = \
-              sim_graph.edges[node_key_val1,node_key_val2]['sim']
+        # assert rec_pair_dict_key not in sim_graph_pair_dict
+        if rec_pair_dict_key not in sim_graph_pair_dict:
+          sim_graph_pair_dict[rec_pair_dict_key] = \
+                sim_graph.edges[node_key_val1,node_key_val2]['sim']
+        else:
+          logging.DEBUG('Assert fail:: ' + str(rec_pair_dict_key) +' already in sim_graph_pair_dict')
 
     for (node_key_val1, node_key_val2) in other_sim_graph.edges():
       str1 = \
