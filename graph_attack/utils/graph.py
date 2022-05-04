@@ -649,7 +649,7 @@ class SimGraph():
           sim_graph_pair_dict[rec_pair_dict_key] = \
                 sim_graph.edges[node_key_val1,node_key_val2]['sim']
         else:
-          logging.DEBUG('Assert fail:: ' + str(rec_pair_dict_key) +' already in sim_graph_pair_dict')
+          logging.debug('Assert fail:: ' + str(rec_pair_dict_key) +' already in sim_graph_pair_dict')
 
     for (node_key_val1, node_key_val2) in other_sim_graph.edges():
       str1 = \
