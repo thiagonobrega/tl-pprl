@@ -75,8 +75,7 @@ MAX_DRAW_PLOT_NODE_NUM = 200
 # logging.info('We processed %d records', 3)
 
 def load_data_set(data_set_name, attr_num_list, ent_id_col, soundex_attr_val_list,
-                  num_rec=-1, col_sep_char=',', header_line_flag=False,
-                ):
+                  num_rec=-1, col_sep_char=',', header_line_flag=False,unique_flag=False):
   """Load a data set and extract required attributes.
 
      It is assumed that the file to be loaded is a comma separated values file.
@@ -102,6 +101,7 @@ def load_data_set(data_set_name, attr_num_list, ent_id_col, soundex_attr_val_lis
                             where values are lists of attribute values.
        - attr_name_list     The list of the attributes to be used.
        - num_rec_loaded     The actual number of records loaded.
+       - unique_flag        Select unique values of atributes
   """
 
   rec_attr_val_dict = {}  # The dictionary of attribute value lists to be 
@@ -144,6 +144,9 @@ def load_data_set(data_set_name, attr_num_list, ent_id_col, soundex_attr_val_lis
   #
   rec_num = 0 
 
+  # utilizado para selecionar valores unicos
+  auxiliary_unique_rec_val = {}
+
   for rec_val_list in csv_reader:
 
     if (num_rec > 0) and (rec_num >= num_rec):
@@ -168,11 +171,21 @@ def load_data_set(data_set_name, attr_num_list, ent_id_col, soundex_attr_val_lis
 #      else:
 #        use_rec_val_list.append('')  # Not needed
 
+    
+    
     # Don't use completely empty list of values
     #
     if (len(''.join(use_rec_val_list)) > 0):
-      rec_attr_val_dict[ent_id] = use_rec_val_list
-      rec_soundex_attr_val_dict[ent_id] = soundex_val_list
+      if unique_flag:
+        try: 
+          auxiliary_unique_rec_val[str(use_rec_val_list)]
+        except KeyError:
+          auxiliary_unique_rec_val[str(use_rec_val_list)] = ent_id
+          rec_attr_val_dict[ent_id] = use_rec_val_list
+          rec_soundex_attr_val_dict[ent_id] = soundex_val_list
+      else:
+        rec_attr_val_dict[ent_id] = use_rec_val_list
+        rec_soundex_attr_val_dict[ent_id] = soundex_val_list
 
   in_f.close()
 
