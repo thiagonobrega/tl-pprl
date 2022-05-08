@@ -2485,8 +2485,9 @@ def calc_plot_histogram_feat_vec_cosine_sim(sim_graph1, sim_graph2,
     # Only use if the node has a non-empty original value
     #
     if (len(org_val) > 0):
-      assert org_val not in sim_graph_node_dict2, org_val
-      sim_graph_node_dict2[org_val] = node_key_val
+      # assert org_val not in sim_graph_node_dict2, org_val
+      if (org_val not in sim_graph_node_dict2):
+        sim_graph_node_dict2[org_val] = node_key_val
 
   # Now get true matching original values across the two graphs
   #
