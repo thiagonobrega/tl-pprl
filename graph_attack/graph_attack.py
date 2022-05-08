@@ -2474,8 +2474,10 @@ def calc_plot_histogram_feat_vec_cosine_sim(sim_graph1, sim_graph2,
     # Only use if the node has a non-empty original value
     #
     if (len(org_val) > 0):
-      assert org_val not in sim_graph_node_dict1, org_val
-      sim_graph_node_dict1[org_val] = node_key_val
+      #ALTERADO SEM TESTE
+      # assert org_val not in sim_graph_node_dict1, org_val
+      if (org_val not in sim_graph_node_dict1):
+        sim_graph_node_dict1[org_val] = node_key_val
 
   for node_key_val in sim_graph2.nodes():
     org_val = ' '.join(sorted(sim_graph2.node[node_key_val]['org_val_set'])[0])
