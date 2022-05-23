@@ -11,7 +11,11 @@ import os
 import pandas as pd
 import zipfile
 
-def open_ds(infile , n_atts='atts-1' , deduplica=True):
+from google.colab import auth
+import gspread
+from google.auth import default
+
+def open_ds(infile , n_atts='atts-1'):
     '''
 
     Open the comparisons files
@@ -34,15 +38,14 @@ def open_ds(infile , n_atts='atts-1' , deduplica=True):
 
             # remove comparacoes com mesma id
             # colocar flag
-            if (deduplica):
-                a = a[a['id1'] != a['id2']]
+            # if (deduplica):
+            #     a = a[a['id1'] != a['id2']]
 
     return a
 
 def load_data(context_s,context_t,
               s_compfile,t_compfile,
               att_s,att_t,
-              dedup_s=False,dedup_t=False,
              ds_dir="./datasets/"):
 
 
@@ -50,8 +53,8 @@ def load_data(context_s,context_t,
     s_file = ds_dir + os.sep + context_s +os.sep+ s_compfile
     t_file = ds_dir + os.sep + context_t +os.sep+ t_compfile
 
-    source_ = open_ds(s_file,n_atts='atts-'+str(att_s),deduplica=dedup_s)
-    target_ = open_ds(t_file,n_atts='atts-'+str(att_t),deduplica=dedup_t)
+    source_ = open_ds(s_file,n_atts='atts-'+str(att_s))
+    target_ = open_ds(t_file,n_atts='atts-'+str(att_t))
 
     log_ = {'source':context_s[:-1],
             'src_len':s_file.split('_')[2],
@@ -74,10 +77,6 @@ def write_results_2_google(df, google_auth,
 
     write_results_2_google(df,gc)
   """
-  
-  from google.colab import auth
-  import gspread
-  from google.auth import default
 
   sh = google_auth.open_by_key(spreadsheetId)
   sheet = sh.worksheet(sheetName)
