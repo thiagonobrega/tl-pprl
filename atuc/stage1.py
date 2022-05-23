@@ -7,6 +7,9 @@
 @Contact :   thiagonobrega@gmail.com
 '''
 
+import numpy as np
+from scipy import linalg
+
 import pandas as pd
 from sklearn.model_selection import train_test_split
 
@@ -94,3 +97,36 @@ def s1_selectData2Train(modelo, source_ds, lambada_corte=.51, atributos=[2, 3, 4
     fds['pp'] = pp[:, 1].tolist()
 
     return fds[(fds['pp'] >= lambada_corte)].iloc[:, atributos + col_gab + [len(fds.columns) - 1]]  # ,fds['pp']
+
+###
+### Instance picking
+###
+
+def coral(Xs,Xt,lambda_=0.00001):
+  cov_Xs = np.cov(Xs, rowvar=False)
+  cov_Xt = np.cov(Xt, rowvar=False)
+
+  Cs = cov_Xs + lambda_ * np.eye(Xs.shape[1])
+  Ct = cov_Xt + lambda_ * np.eye(Xt.shape[1])
+
+  Cs_sqrt_inv = linalg.inv(linalg.sqrtm(Cs))
+  Ct_sqrt = linalg.sqrtm(Ct)
+  
+  if np.iscomplexobj(Cs_sqrt_inv):
+    Cs_sqrt_inv = Cs_sqrt_inv.real
+  if np.iscomplexobj(Ct_sqrt):
+      Ct_sqrt = Ct_sqrt.real
+        
+  Xs_emb = np.matmul(Xs, Cs_sqrt_inv)
+  Xs_emb = np.matmul(Xs_emb, Ct_sqrt)
+  return Xs_emb
+
+def apply_source_adptation(src,target):
+  Xt = target.iloc[:,2:-1]
+  Xs = src.iloc[:,:-1]
+  Xs = coral(Xs,Xt,lambda_=1)
+  adjusted_src = src.copy()
+  adjusted_src.iloc[:,:-1]=Xs
+
+  # falta corrigir o maiores que 1 e menores 0
+  return adjusted_src

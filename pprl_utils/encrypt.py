@@ -170,7 +170,7 @@ def compare_ds(dfa, dfb, atts, golds, bf_len,  bigrams=2):
     # return pd.DataFrame(otodo), {'n_hash': bf_hash_functions,'bits': bf_bit_size,'cap': bf_capacity , 'atts' : len(atts)}
 
 
-def compare_ds_based_on_blk(dfa, dfb, atts, gold, bf_len, comps, bigrams=2):
+def compare_ds_based_on_blk(dfa, dfb, atts, gold, bf_len, comps, bigrams=2, use_comps_in_gold=False):
     '''
     Compara dois dadataset, diferente do anterior ele so compara os pares indicados no goldstandart
 
@@ -182,6 +182,7 @@ def compare_ds_based_on_blk(dfa, dfb, atts, gold, bf_len, comps, bigrams=2):
 
     :param golds: gabarito ja passado pelo metodo datasetutil.gerar_gabarito()
     :param bigrams:
+    :use_comps_in_gold: so utiliza as comparacoes do gold (defaul: False)
 
     :return:
     '''
@@ -210,6 +211,7 @@ def compare_ds_based_on_blk(dfa, dfb, atts, gold, bf_len, comps, bigrams=2):
     bf_bit_size = bft.bit_size
 
     otodo = []
+    contador = 0
     # comparando apenas os do gold
     for i , row in comps.iterrows():
         # id1 = _dfa[_dfa.id == row.id1].id.values[0]
@@ -218,6 +220,7 @@ def compare_ds_based_on_blk(dfa, dfb, atts, gold, bf_len, comps, bigrams=2):
         # bf2 = _dfb[_dfb.id == row.id2].bf.values[0]
         id1 = row.id1
         id2 = row.id2
+        
         try:
             bf1 = dict_dfa[id1]
             bf2 = dict_dfb[id2]
@@ -228,20 +231,29 @@ def compare_ds_based_on_blk(dfa, dfb, atts, gold, bf_len, comps, bigrams=2):
             ha = hamming_coefficient(bf1 , bf2)
             hx = entropy_coefficient(bf1 , bf2)
 
+            
             try:
                 classificacao = gold[id1][id2]  # mudar variavel
+                contador+=1
+                if use_comps_in_gold:
+                    linha = [id1 , id2 , dice , jac , ol , ha , hx , classificacao]
+                    otodo.append(linha)
             except KeyError:
                 classificacao = 0  # nao e match
 
-            linha = [id1 , id2 , dice , jac , ol , ha , hx , classificacao]
-            otodo.append(linha)
+            if not use_comps_in_gold:
+                linha = [id1 , id2 , dice , jac , ol , ha , hx , classificacao]
+                otodo.append(linha)
 
         except KeyError:
             #caso nao tenha os valores nos dicionarios
             pass
+        
 
     cnames = ['id1' , 'id2' , 'dice' , 'jaccard' , 'overlap' ,
               'hamming' , 'entropy' , 'is_match']
+    
+    # print("::::: " + str(contador))
 
     return pd.DataFrame(otodo , columns=cnames) , {'n_hash': bf_hash_functions , 'bits': bf_bit_size ,
                                                    'cap': 0 , 'atts': len(atts)}
