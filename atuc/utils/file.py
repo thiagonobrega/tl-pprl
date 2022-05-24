@@ -11,10 +11,6 @@ import os
 import pandas as pd
 import zipfile
 
-from google.colab import auth
-import gspread
-from google.auth import default
-
 def open_ds(infile , n_atts='atts-1'):
     '''
 
@@ -77,6 +73,9 @@ def write_results_2_google(df, google_auth,
 
     write_results_2_google(df,gc)
   """
+  from google.colab import auth
+  import gspread
+  from google.auth import default
 
   sh = google_auth.open_by_key(spreadsheetId)
   sheet = sh.worksheet(sheetName)

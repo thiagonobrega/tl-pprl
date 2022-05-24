@@ -10,6 +10,8 @@
 import pandas as pd
 import numpy as np
 
+from tqdm.notebook import trange, tqdm
+
 from sklearn.linear_model import LogisticRegression
 from sklearn.svm import LinearSVC
 from sklearn.calibration import CalibratedClassifierCV
@@ -102,3 +104,44 @@ def calcular_metricas_dados_relacionado(source_,target_,atts = [2,3,4,5,6],
 
     
     return error_t, e_s,dh_UU/2,complemento, mcc
+
+def search_best_dr(sources,targets,atts = [2,3,4,5,6],lr_model_name='Logistic'):
+    """
+        search best source and target distance considering the BenDavid work [1]
+    """
+    resultado = []
+
+
+    for es_ in trange(len(sources),desc='Datasets 1', leave=False):
+        for et_ in trange(len(targets),desc='Datasets 2', leave=False):
+
+            s_  = sources[es_][0]
+            t_  = targets[et_][0]
+            if s_ != t_:
+                #print(s_,t_)
+                _fs = sources[es_][1]
+                _ft = targets[et_][1]
+                atts_s = sources[es_][2]
+                atts_t = targets[et_][2]
+
+                for fs in _fs: # itera nos arquivos
+                    for ft in _ft:
+                        if s_ == "census/":
+                            source_,target_,log_ds = load_data(s_,t_,fs,ft,atts_s,atts_t)
+                        elif t_ == "census/":
+                            source_,target_,log_ds = load_data(s_,t_,fs,ft,atts_s,atts_t)
+                        else:
+                            source_,target_,log_ds = load_data(s_,t_,fs,ft,atts_s,atts_t)
+                        
+                        try:
+                            et, e_s, dhh,complemento, mcc = calcular_metricas_dados_relacionado(source_,target_,atts=atts,lr_model_name=lr_model_name)    
+                            logs_dr = {'e_s':e_s,'dhh':dhh,'complemento':complemento,'et':et, 'mcc':mcc}
+                        except Exception as e:
+#                         except NameError as e:
+                            nome = e.__class__.__name__
+#                             print(nome)
+#                             print("Error",nome,":",s_,t_,fs,ft)
+                            logs_dr = {'e_s':-1,'dhh':-1,'complemento':-1,'et':-1, 'mcc':-1}
+                        
+                        resultado.append({**log_ds , **logs_dr})
+    return resultado
