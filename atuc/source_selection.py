@@ -17,6 +17,7 @@ from sklearn.svm import LinearSVC
 from sklearn.calibration import CalibratedClassifierCV
 from sklearn.metrics import mean_absolute_error, matthews_corrcoef
 
+from atuc.utils.file import open_ds, load_data
 from atuc.utils import ajustar_treino, showPredictionsSummary
 from atuc.stage1 import s1_prepareTrainingData, s1_trainDSClassifier, s1_selectData2Train
 
