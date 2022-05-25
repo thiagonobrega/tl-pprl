@@ -62,9 +62,9 @@ def load_data(context_s,context_t,
     else:
         target_ = open_ds(t_file,n_atts='atts-'+str(att_t),blk='blk-'+str(blk_t))
 
-    log_ = {'source':context_s[:-1],
+    log_ = {'source':context_s,
             'src_len':s_file.split('_')[2],
-            'target':context_t[:-1],
+            'target':context_t,
             'tgt_len':t_file.split('_')[2],
             'atts_source':att_s,'atts_target':att_t}
 
