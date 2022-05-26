@@ -210,7 +210,7 @@ def execute_classifier_manufacturing(source_,target_,
         raise ValueError("Few Matches " + str(numero_matches))
 
     if numero_unmatches < numero_matches * proporcao_match_nonmatch:
-        raise ValueError("Few Un Matches : " + str(numero_matches) +"matches / " + str(numero_unmatches) "unmatches" )
+        raise ValueError("Few Un Matches : " + str(numero_matches) +"matches / " + str(numero_unmatches) + "unmatches" )
 
     #### selecionando os dados
     data_naive = data_.iloc[:,:-1]
