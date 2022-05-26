@@ -149,7 +149,8 @@ def execute_classifier_manufacturing(source_,target_,
                                         lr_model_name='Logistic',_lambda=.51,
                                         stage1_model='Logistic',
                                         funcao_w=None,
-                                        min_match_number=3):
+                                        min_match_number=3,
+                                        proporcao_match_nonmatch=2):
     """
         execute the classifier manufactorin stage of AT-UC
         
@@ -166,6 +167,8 @@ def execute_classifier_manufacturing(source_,target_,
             - Logistic: LogisticRegresion
             - SVM: Suport Vector Machine (LinearSVC)
             - DT: Decision Tree (RandomForestClassifier)
+        - min_match_number : minim number of match
+        - proporcao_match_nonmatch : proportion of match and unmatch instance
     """
 
     assert lr_model_name in ['Logistic','SVM','DT','GBC']
@@ -206,8 +209,8 @@ def execute_classifier_manufacturing(source_,target_,
     if numero_matches < min_match_number:
         raise ValueError("Few Matches " + str(numero_matches))
 
-    if numero_unmatches < numero_matches * 5:
-        raise ValueError("Few Un Matches " + str(numero_matches) )
+    if numero_unmatches < numero_matches * proporcao_match_nonmatch:
+        raise ValueError("Few Un Matches : " + str(numero_matches) +"matches / " + str(numero_unmatches) "unmatches" )
 
     #### selecionando os dados
     data_naive = data_.iloc[:,:-1]
@@ -287,7 +290,7 @@ def execute_classifier_manufacturing(source_,target_,
     naive_log = generate_logs_s1(Y_t, Y_naive,'naive','all',lr_model_name,stage1_model)
     base_log = generate_logs_s1(Y_t, Y_base,'tl-base','all',lr_model_name,stage1_model)
     topk_log = generate_logs_s1(Y_t, Y_topk,'tl_pprl','top_k',lr_model_name,stage1_model)
-    topk_adpt_log = generate_logs_s1(Y_t, Y_topk_adpt,'tl_pprl','top_k_adpt',lr_model_name,stage1_model)
+    topk_adpt_log = generate_logs_s1(Y_t, Y_topk_adpt,'tl_pprl++','top_k_adpt',lr_model_name,stage1_model)
 
     logs = [naive_log,base_log,topk_log,topk_adpt_log]
 
