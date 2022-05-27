@@ -223,10 +223,11 @@ def execute_classifier_manufacturing(source_,target_,
     #### selecionando os dados
     data_naive = data_.iloc[:,:-1]
     
+    data_coral = source_.copy()
+    data_coral['pp'] = 1
     try:
-        data_coral = apply_source_adptation(source_.copy(),target_)
+        data_coral = apply_source_adptation(data_coral,target_)
     except ValueError as e:
-        data_coral = source_.copy()
         logging.debug(":::: CORAL ERROR :::")
         logging.debug(str(e))
 
