@@ -223,10 +223,10 @@ def execute_classifier_manufacturing(source_,target_,
     #### selecionando os dados
     data_naive = data_.iloc[:,:-1]
     
-    data_coral = source_.iloc[:,2:].copy()
-    data_coral['pp'] = 1
+    
+    data_coral = source_.iloc[:,2:(2 + len(atributos))].copy()
     try:
-        data_coral = apply_source_adptation(data_coral,target_)
+        data_coral = coral(data_coral,target_.iloc[:,2:-1],lambda_=1)
     except ValueError as e:
         logging.debug(":::: CORAL ERROR :::")
         logging.debug(str(e))
@@ -256,7 +256,9 @@ def execute_classifier_manufacturing(source_,target_,
     Y_naive = data_naive.pop('is_match').values
     y_s1b = data.pop('is_match')
     y_s1r = data_adapted.pop('is_match') # tl-pprl++
-    y_coral = data_coral.pop('is_match').values #coral
+    coral_y = source_.copy()
+    y_coral = coral_y.pop('is_match').values #coral
+    del coral_y
 
     #treinando classificador no target
     model_base  = LogisticRegression(random_state=10100,n_jobs=-1)
