@@ -279,13 +279,13 @@ def execute_classifier_manufacturing(source_,target_,
         model_s1b   = CalibratedClassifierCV(base_estimator=svc, cv=2)
         model_w_s1b = CalibratedClassifierCV(base_estimator=svc, cv=2)
         model_s1r   = CalibratedClassifierCV(base_estimator=svc, cv=2)
-        model_coral = CalibratedClassifierCV(random_state=10100,n_jobs=-1)
+        model_coral = CalibratedClassifierCV(base_estimator=svc, cv=2)
     if stage1_model == 'DT':
         model_base  = RandomForestClassifier(n_estimators=10,random_state=101010,n_jobs=-1)
         model_s1b   = RandomForestClassifier(n_estimators=10,random_state=101010,n_jobs=-1)
         model_w_s1b = RandomForestClassifier(n_estimators=10,random_state=101010,n_jobs=-1)
         model_s1r   = RandomForestClassifier(n_estimators=10,random_state=101010,n_jobs=-1)
-        model_coral = RandomForestClassifier(random_state=10100,n_jobs=-1)
+        model_coral = RandomForestClassifier(n_estimators=10,random_state=101010,n_jobs=-1)
     if lr_model_name == 'GBC':
         model_base  = GradientBoostingClassifier(random_state=101010,loss="exponential")
         model_s1b   = GradientBoostingClassifier(random_state=101010,loss="exponential")
