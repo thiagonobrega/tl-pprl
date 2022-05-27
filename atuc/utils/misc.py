@@ -81,8 +81,13 @@ def generate_logs_s1(_y, _ty, s1_name, s1_sample, model_dt, model_s1, peso='none
     # caso nao tenha nenhum match
     try:
         actual_1 = nY_g[1]
+        actual_0 = nY_g[0]
     except KeyError:
         actual_1 = 0
+    try:
+        actual_0 = nY_g[0]
+    except KeyError:
+        actual_0 = 0
 
     base = {'data_train_model': model_dt ,
             'stage1_model': model_s1 ,
@@ -95,7 +100,7 @@ def generate_logs_s1(_y, _ty, s1_name, s1_sample, model_dt, model_s1, peso='none
             'accuracy': accuracy_score(_y , _ty) ,
             'predicted_0': nY_b.get(0, 0),
             'predicted_1': nY_b.get(1, 0),
-            'actual_0': nY_g[0],
+            'actual_0': actual_0,
             'actual_1': actual_1
             }
     return base
