@@ -223,7 +223,7 @@ def execute_classifier_manufacturing(source_,target_,
     #### selecionando os dados
     data_naive = data_.iloc[:,:-1]
     
-    data_coral = source_[:,2:].copy()
+    data_coral = source_.iloc[:,2:].copy()
     data_coral['pp'] = 1
     try:
         data_coral = apply_source_adptation(data_coral,target_)
