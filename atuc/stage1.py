@@ -230,6 +230,9 @@ def execute_classifier_manufacturing(source_,target_,
     except ValueError as e:
         logging.debug(":::: CORAL ERROR :::")
         logging.debug(str(e))
+    except TypeError as e:
+        logging.debug(":::: CORAL ERROR :::")
+        logging.debug(str(e))
 
     start_time = time.time()
     data , w = ajustar_treino(data_,numero_matches,p=_s1_percentualmatch)
