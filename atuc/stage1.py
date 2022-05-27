@@ -7,6 +7,8 @@
 @Contact :   thiagonobrega@gmail.com
 '''
 
+from distutils.util import execute
+import logging
 import time
 
 import numpy as np
@@ -220,6 +222,15 @@ def execute_classifier_manufacturing(source_,target_,
 
     #### selecionando os dados
     data_naive = data_.iloc[:,:-1]
+
+    data_coral = data_naive.copy()
+    try:
+        data_coral = apply_source_adptation(data_coral,target_)
+    except ValueError as e:
+        data_coral = data_coral.copy()
+        logging.debug(":::: CORAL ERROR :::")
+        logging.debug(str(e))
+
     start_time = time.time()
     data , w = ajustar_treino(data_,numero_matches,p=_s1_percentualmatch)
     adjust_train_data_time = time.time() - start_time
@@ -227,8 +238,13 @@ def execute_classifier_manufacturing(source_,target_,
     ###
     ### regularizacao
     ###
-    data_adapted = apply_source_adptation(data,target_)
     
+    try:
+        data_adapted = apply_source_adptation(data,target_)
+    except ValueError as e:
+        data_adapted = data.copy()
+        logging.debug("CORAL ERROR :::")
+        logging.debug(str(e))
     
     #caso utilizar antes da selecao
     # data_.iloc[:,:-2]
@@ -236,44 +252,50 @@ def execute_classifier_manufacturing(source_,target_,
     # selecao naive
     Y_naive = data_naive.pop('is_match').values
     y_s1b = data.pop('is_match')
-    y_s1r = data_adapted.pop('is_match')
+    y_s1r = data_adapted.pop('is_match') # tl-pprl++
+    y_coral = data_coral.pop('is_match').values #coral
 
     #treinando classificador no target
     model_base  = LogisticRegression(random_state=10100,n_jobs=-1)
     model_s1b   = LogisticRegression(random_state=10100,n_jobs=-1)
     model_w_s1b = LogisticRegression(random_state=10100,n_jobs=-1)
     model_s1r   = LogisticRegression(random_state=10100,n_jobs=-1)
+    model_coral = LogisticRegression(random_state=10100,n_jobs=-1)
 
     if stage1_model == 'Logistic':
         model_base  = LogisticRegression(random_state=10100,n_jobs=-1)
         model_s1b   = LogisticRegression(random_state=10100,n_jobs=-1)
         model_w_s1b = LogisticRegression(random_state=10100,n_jobs=-1)
         model_s1r   = LogisticRegression(random_state=10100,n_jobs=-1)
+        model_coral = LogisticRegression(random_state=10100,n_jobs=-1)
     if stage1_model == 'SVM':
         svc = LinearSVC(random_state=10100)
         model_base  = CalibratedClassifierCV(base_estimator=svc, cv=2)
         model_s1b   = CalibratedClassifierCV(base_estimator=svc, cv=2)
         model_w_s1b = CalibratedClassifierCV(base_estimator=svc, cv=2)
         model_s1r   = CalibratedClassifierCV(base_estimator=svc, cv=2)
+        model_coral = CalibratedClassifierCV(random_state=10100,n_jobs=-1)
     if stage1_model == 'DT':
         model_base  = RandomForestClassifier(n_estimators=10,random_state=101010,n_jobs=-1)
         model_s1b   = RandomForestClassifier(n_estimators=10,random_state=101010,n_jobs=-1)
         model_w_s1b = RandomForestClassifier(n_estimators=10,random_state=101010,n_jobs=-1)
         model_s1r   = RandomForestClassifier(n_estimators=10,random_state=101010,n_jobs=-1)
+        model_coral = RandomForestClassifier(random_state=10100,n_jobs=-1)
     if lr_model_name == 'GBC':
         model_base  = GradientBoostingClassifier(random_state=101010,loss="exponential")
         model_s1b   = GradientBoostingClassifier(random_state=101010,loss="exponential")
         model_w_s1b = GradientBoostingClassifier(random_state=101010,loss="exponential")
         model_s1r   = GradientBoostingClassifier(random_state=101010,loss="exponential")
+        model_coral = GradientBoostingClassifier(random_state=101010,loss="exponential")
     
 
     model_base.fit(data_naive,Y_naive.astype('int'))
+    model_coral.fit(data_coral,y_coral.astype('int'))
     
     start_time = time.time()
     model_s1b.fit(data,y_s1b.astype('int'))
-    train_classifier_time = time.time() - start_time
-
     model_s1r.fit(data_adapted,y_s1r.astype('int')) # ajustado
+    train_classifier_time = time.time() - start_time
     
 
     ######################################
@@ -286,19 +308,23 @@ def execute_classifier_manufacturing(source_,target_,
 
     Y_naive = modelo.predict(t_) # modelo totalmente treinado no source
     Y_base = model_base.predict(t_)
+    Y_coral = model_coral.predict(t_)
     
     start_time = time.time()
     Y_topk = model_s1b.predict(t_)
     execute_classifier_time = time.time() - start_time
     
     Y_topk_adpt = model_s1r.predict(t_)
-
+    
+    topk_adpt_log = generate_logs_s1(Y_t, Y_topk_adpt,'tl_pprl++','top_k_adpt',lr_model_name,stage1_model)
     naive_log = generate_logs_s1(Y_t, Y_naive,'naive','all',lr_model_name,stage1_model)
     base_log = generate_logs_s1(Y_t, Y_base,'tl-base','all',lr_model_name,stage1_model)
     topk_log = generate_logs_s1(Y_t, Y_topk,'tl_pprl','top_k',lr_model_name,stage1_model)
-    topk_adpt_log = generate_logs_s1(Y_t, Y_topk_adpt,'tl_pprl++','top_k_adpt',lr_model_name,stage1_model)
+    coral_log = generate_logs_s1(Y_t, Y_coral,'coral','all',lr_model_name,stage1_model)
+    
+    
 
-    logs = [naive_log,base_log,topk_log,topk_adpt_log]
+    logs = [naive_log,base_log,topk_log,topk_adpt_log,coral_log]
 
     # passando funcao com peso para o modelo
     # TODO: Colocar no log a funcao
@@ -331,6 +357,7 @@ def execute_classifier_manufacturing(source_,target_,
     _dbase['y']  = Y_base
     _dtopk['y']  = Y_topk
     _dtopkw['y'] = Y_topkw
+    #nao retornando o Y do tl-pprl++ e coral
 
     data = [_dnaive,_dbase,_dtopk,_dtopkw]
     
@@ -341,6 +368,4 @@ def execute_classifier_manufacturing(source_,target_,
                 'train_classifier':train_classifier_time,
                 'execute_classifier':execute_classifier_time}
     
-#     sep_model_time, select_train_data_time, adjust_train_data_time, train_classifier_time, execute_classifier_time
-
     return data, logs, time_log#, data_ # colocado o data
