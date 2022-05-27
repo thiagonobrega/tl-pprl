@@ -210,7 +210,13 @@ def execute_classifier_manufacturing(source_,target_,
         raise ValueError("Few Matches " + str(numero_matches))
 
     if numero_unmatches < numero_matches * proporcao_match_nonmatch:
-        raise ValueError("Few Un Matches : " + str(numero_matches) +"matches / " + str(numero_unmatches) + "unmatches" )
+        if numero_unmatches > 0:
+            numero_matches = int(numero_unmatches/proporcao_match_nonmatch)
+            data_m = data_[data_['is_match'] == 1].head(numero_matches)
+            data_um = data_[data_['is_match'] == 0]
+            data_ = pd.concat([data_m,data_um])
+        else:
+            raise ValueError("Few Un Matches : " + str(numero_matches) +"matches / " + str(numero_unmatches) + "unmatches" )
 
     #### selecionando os dados
     data_naive = data_.iloc[:,:-1]
