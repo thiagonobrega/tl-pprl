@@ -9,18 +9,24 @@
 '''
 import pandas as pd
 import numpy as np
+import logging
+
+from tqdm.notebook import trange, tqdm
 
 from sklearn.linear_model import LogisticRegression
 from sklearn.svm import LinearSVC
 from sklearn.calibration import CalibratedClassifierCV
 from sklearn.metrics import mean_absolute_error, matthews_corrcoef
 
+from atuc.utils.file import open_ds, load_data
 from atuc.utils import ajustar_treino, showPredictionsSummary
 from atuc.stage1 import s1_prepareTrainingData, s1_trainDSClassifier, s1_selectData2Train
 
 
 def calcular_metricas_dados_relacionado(source_,target_,atts = [2,3,4,5,6],
-                                        lr_model_name='Logistic',_s1_percentualmatch=0.1):
+                                        lr_model_name='Logistic',
+                                        _s1_percentualmatch=0.1,
+                                        percentual_minimo_de_match=2):
     """
         Calculate the source and target distance according to the BenDavid work [1]
 
@@ -50,11 +56,20 @@ def calcular_metricas_dados_relacionado(source_,target_,atts = [2,3,4,5,6],
     numero_matches = len(data_[data_['is_match'] == 1])  # salvar
     numero_unmatches = len(data_[data_['is_match'] == 0]) # salvar
 
-#     if numero_matches < 1:
-#         raise ValueError("Few Matches " + str(numero_matches))
+    
 
-#     if numero_unmatches < numero_matches * 5:
-#         raise ValueError("Few Un Matches " + str(numero_matches) )
+    if numero_matches < 1:
+        raise ValueError("Few Matches " + str(numero_matches))
+
+    if numero_unmatches < numero_matches * percentual_minimo_de_match:
+      if numero_unmatches > 0:
+        numero_matches = int(numero_unmatches/percentual_minimo_de_match)
+        data_m = data_[data_['is_match'] == 1].head(numero_matches)
+        data_um = data_[data_['is_match'] == 0]
+        data_ = pd.concat([data_m,data_um])
+      else:
+        # print(numero_matches,'/',numero_unmatches)
+        raise ValueError("Few Un Matches : " + str(numero_matches) +"matches / " + str(numero_unmatches) + "unmatches" )
 
     data , w = ajustar_treino(data_,numero_matches,p=_s1_percentualmatch)
 
@@ -102,3 +117,42 @@ def calcular_metricas_dados_relacionado(source_,target_,atts = [2,3,4,5,6],
 
     
     return error_t, e_s,dh_UU/2,complemento, mcc
+
+def search_best_dr(sources,targets,atts = [2,3,4,5,6],lr_model_name='Logistic'):
+    """
+        search best source and target distance considering the BenDavid work [1]
+        1. Ben-David, John Blitzer, Koby Crammer, Alex Kulesza, Fernando Pereira, and Jennifer Wortman Vaughan. A theory of learning from different domains. Machine Learning, 79(1-2):151–175, 5 2010. ISSN 0885- 6125. doi: 10.1007/s10994-009-5152-4.
+    """
+    resultado = []
+
+
+    for es_ in trange(len(sources),desc='Datasets 1', leave=False):
+        for et_ in trange(len(targets),desc='Datasets 2', leave=False):
+
+            s_  = sources[es_][0]
+            t_  = targets[et_][0]
+            if s_ != t_:
+                #print(s_,t_)
+                _fs = sources[es_][1]
+                _ft = targets[et_][1]
+                atts_s = sources[es_][2]
+                atts_t = targets[et_][2]
+                blk_s = sources[es_][3]
+                blk_t = targets[et_][3]
+
+                for fs in _fs: # itera nos arquivos
+                    for ft in _ft:
+                        source_,target_,log_ds = load_data(s_,t_,fs,ft,atts_s,atts_t,blk_s,blk_t)
+                        
+                        try:
+                            et, e_s, dhh,complemento, mcc = calcular_metricas_dados_relacionado(source_,target_,atts=atts,lr_model_name=lr_model_name)    
+                            logs_dr = {'e_s':e_s,'dhh':dhh,'complemento':complemento,'et':et, 'mcc':mcc}
+                        # except Exception as e:
+                        except ValueError as e:
+                            nome = e.__class__.__name__
+                            logging.debug("Error",nome,":",s_,t_,fs,ft)
+                            logging.debug(e)
+                            logs_dr = {'e_s':-1,'dhh':-1,'complemento':-1,'et':-1, 'mcc':-1}
+                        
+                        resultado.append({**log_ds , **logs_dr})
+    return resultado

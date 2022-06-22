@@ -11,7 +11,7 @@ import os
 import pandas as pd
 import zipfile
 
-def open_ds(infile , n_atts='atts-1' , deduplica=True):
+def open_ds(infile , n_atts='atts-1',blk=None):
     '''
 
     Open the comparisons files
@@ -24,38 +24,47 @@ def open_ds(infile , n_atts='atts-1' , deduplica=True):
     zf = zipfile.ZipFile(infile)
     nl = zipfile.ZipFile.namelist(zf)
 
+    filtering_key = n_atts
+    if blk != None:
+        filtering_key = n_atts + '-' +str(blk) + '.csv'
+    
     for i in range(0, len(nl)):
-
         fn = nl[i]
 
-        if (n_atts in fn):
+        if (filtering_key in fn):
             a = pd.read_csv(zf.open(fn), header=0, sep=";",
                             index_col=False)
 
             # remove comparacoes com mesma id
             # colocar flag
-            if (deduplica):
-                a = a[a['id1'] != a['id2']]
+            # if (deduplica):
+            #     a = a[a['id1'] != a['id2']]
 
     return a
 
 def load_data(context_s,context_t,
-              s_compfile,t_compfile,
-              att_s,att_t,
-              dedup_s=False,dedup_t=False,
-             ds_dir="./datasets/"):
+                s_compfile,t_compfile,
+                att_s,att_t,
+                blk_s=None,blk_t=None,
+                ds_dir="./datasets/"):
 
 
 
     s_file = ds_dir + os.sep + context_s +os.sep+ s_compfile
     t_file = ds_dir + os.sep + context_t +os.sep+ t_compfile
 
-    source_ = open_ds(s_file,n_atts='atts-'+str(att_s),deduplica=dedup_s)
-    target_ = open_ds(t_file,n_atts='atts-'+str(att_t),deduplica=dedup_t)
+    if blk_s == None:
+        source_ = open_ds(s_file,n_atts='atts-'+str(att_s))
+    else:
+        source_ = open_ds(s_file,n_atts='atts-'+str(att_s),blk='blk-'+str(blk_s))
+    if blk_t == None:
+        target_ = open_ds(t_file,n_atts='atts-'+str(att_t))
+    else:
+        target_ = open_ds(t_file,n_atts='atts-'+str(att_t),blk='blk-'+str(blk_t))
 
-    log_ = {'source':context_s[:-1],
+    log_ = {'source':context_s,
             'src_len':s_file.split('_')[2],
-            'target':context_t[:-1],
+            'target':context_t,
             'tgt_len':t_file.split('_')[2],
             'atts_source':att_s,'atts_target':att_t}
 
@@ -74,7 +83,6 @@ def write_results_2_google(df, google_auth,
 
     write_results_2_google(df,gc)
   """
-  
   from google.colab import auth
   import gspread
   from google.auth import default

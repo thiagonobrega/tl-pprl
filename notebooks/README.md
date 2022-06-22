@@ -1,6 +1,9 @@
 
 preprocessing methods employed
 
+1. Execute pre-processing : extract samples
+2. Execute comps
+
 ### Pre-processing notebooks
 
 **converting raw dataset to a standard format**
@@ -13,3 +16,5 @@ preprocessing methods employed
 
 **quality evaluation**
  - eval_ds_quality
+
+ ### Gen COmpos

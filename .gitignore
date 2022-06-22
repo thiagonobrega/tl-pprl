@@ -1,3 +1,6 @@
 __pycache__/
 datasets/
+datasets_comps/
 saida/
+notebooks/gen-comps/1-encrypt.ipynb
+.gitignore

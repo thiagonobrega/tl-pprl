@@ -7,9 +7,21 @@
 @Contact :   thiagonobrega@gmail.com
 '''
 
-import pandas as pd
-from sklearn.model_selection import train_test_split
+from distutils.util import execute
+import logging
+import time
 
+import numpy as np
+from scipy import linalg
+import pandas as pd
+
+from sklearn.model_selection import train_test_split
+from sklearn.linear_model import LogisticRegression
+from sklearn.svm import LinearSVC, SVC
+from sklearn.calibration import CalibratedClassifierCV
+from sklearn.ensemble import RandomForestClassifier, GradientBoostingClassifier
+
+from atuc.utils import ajustar_treino, generate_logs_s1
 
 def s1_prepareTrainingData_v1(s, t, ts=.3, atributos=[2, 3, 4, 5, 6]):
     '''
@@ -94,3 +106,271 @@ def s1_selectData2Train(modelo, source_ds, lambada_corte=.51, atributos=[2, 3, 4
     fds['pp'] = pp[:, 1].tolist()
 
     return fds[(fds['pp'] >= lambada_corte)].iloc[:, atributos + col_gab + [len(fds.columns) - 1]]  # ,fds['pp']
+
+###
+### Instance picking
+###
+
+def coral(Xs,Xt,lambda_=0.00001):
+  cov_Xs = np.cov(Xs, rowvar=False)
+  cov_Xt = np.cov(Xt, rowvar=False)
+
+  Cs = cov_Xs + lambda_ * np.eye(Xs.shape[1])
+  Ct = cov_Xt + lambda_ * np.eye(Xt.shape[1])
+
+  Cs_sqrt_inv = linalg.inv(linalg.sqrtm(Cs))
+  Ct_sqrt = linalg.sqrtm(Ct)
+  
+  if np.iscomplexobj(Cs_sqrt_inv):
+    Cs_sqrt_inv = Cs_sqrt_inv.real
+  if np.iscomplexobj(Ct_sqrt):
+      Ct_sqrt = Ct_sqrt.real
+        
+  Xs_emb = np.matmul(Xs, Cs_sqrt_inv)
+  Xs_emb = np.matmul(Xs_emb, Ct_sqrt)
+  return Xs_emb
+
+def apply_source_adptation(src,target):
+  Xt = target.iloc[:,2:-1]
+  Xs = src.iloc[:,:-1]
+  Xs = coral(Xs,Xt,lambda_=1)
+  adjusted_src = src.copy()
+  adjusted_src.iloc[:,:-1]=Xs
+
+  # falta corrigir o maiores que 1 e menores 0
+  return adjusted_src
+
+###
+###
+###
+
+def execute_classifier_manufacturing(source_,target_,
+                                        ts=.3,
+                                        atributos=[2,3,4,5,6],columns_y=[7],
+                                        _s1_percentualmatch=0.1,
+                                        lr_model_name='Logistic',_lambda=.51,
+                                        stage1_model='Logistic',
+                                        funcao_w=None,
+                                        min_match_number=3,
+                                        proporcao_match_nonmatch=2):
+    """
+        execute the classifier manufactorin stage of AT-UC
+        
+        - *source_*, source dataset
+        - *target_*, target datase
+        - *ts*, percentual of the datatset that will be employed as test (second filtering)
+        - *attributos*, a list with all attributes (similarity metrics) taht will be employed
+        - *lr_model_name*, model that will be employed to train the dataset classifier.
+            - Logistic: LogisticRegresion
+            - SVM: Suport Vector Machine (LinearSVC)
+            - DT: Decision Tree (RandomForestClassifier)
+        - *_lambda*, the minimal confidence needed to use the pair to train the target (default=.51)
+        - *stage1_model*, model that will be employed to train the dataset classifier
+            - Logistic: LogisticRegresion
+            - SVM: Suport Vector Machine (LinearSVC)
+            - DT: Decision Tree (RandomForestClassifier)
+        - min_match_number : minim number of match
+        - proporcao_match_nonmatch : proportion of match and unmatch instance
+    """
+
+    assert lr_model_name in ['Logistic','SVM','DT','GBC']
+    assert stage1_model in ['Logistic','SVM','DT','GBC']
+
+    X_train, X_test, Y_train, Y_test  = s1_prepareTrainingData(source_,target_,ts=.3,atributos=atributos)
+
+    if lr_model_name == 'Logistic':
+        lr_model = LogisticRegression(random_state=10100,n_jobs=-1)
+    if lr_model_name == 'SVM':
+        svc = LinearSVC(random_state=10100)
+        lr_model = CalibratedClassifierCV(base_estimator=svc, cv=2)
+#         lr_model = SVC(random_state=10100,probability=True)
+    if lr_model_name == 'DT':
+        lr_model = RandomForestClassifier(n_estimators=10,random_state=101010,n_jobs=-1)
+    if lr_model_name == 'GBC':
+        lr_model = GradientBoostingClassifier(random_state=101010)
+
+    # treinando modelo para dar peso aos pares
+    start_time = time.time()
+    modelo = s1_trainDSClassifier(X_train,Y_train,lr_model)
+    sep_model_time = time.time() - start_time
+
+    #################################################################
+    ### selecionando os dados para serem utilizados no treinamento
+    ### target
+    #################################################################
+
+    start_time = time.time()
+    data_ = s1_selectData2Train(modelo,source_,
+                                lambada_corte=_lambda,
+                                atributos=atributos)
+    select_train_data_time = time.time() - start_time
+    
+    numero_matches = len(data_[data_['is_match'] == 1])  # salvar
+    numero_unmatches = len(data_[data_['is_match'] == 0]) # salvar
+
+    if numero_matches < min_match_number:
+        raise ValueError("Few Matches " + str(numero_matches))
+
+    if numero_unmatches < numero_matches * proporcao_match_nonmatch:
+        if numero_unmatches > 0:
+            numero_matches = int(numero_unmatches/proporcao_match_nonmatch)
+            data_m = data_[data_['is_match'] == 1].head(numero_matches)
+            data_um = data_[data_['is_match'] == 0]
+            data_ = pd.concat([data_m,data_um])
+        else:
+            raise ValueError("Few Un Matches : " + str(numero_matches) +"matches / " + str(numero_unmatches) + "unmatches" )
+
+    #### selecionando os dados
+    data_naive = data_.iloc[:,:-1]
+    
+    
+    data_coral = source_.iloc[:,2:(2 + len(atributos))].copy()
+    try:
+        data_coral = coral(data_coral,target_.iloc[:,2:-1],lambda_=1)
+    except ValueError as e:
+        logging.debug(":::: CORAL ERROR :::")
+        logging.debug(str(e))
+    except TypeError as e:
+        logging.debug(":::: CORAL ERROR :::")
+        logging.debug(str(e))
+
+    start_time = time.time()
+    data , w = ajustar_treino(data_,numero_matches,p=_s1_percentualmatch)
+    adjust_train_data_time = time.time() - start_time
+
+    ###
+    ### regularizacao
+    ###
+    
+    try:
+        data_adapted = apply_source_adptation(data,target_)
+    except ValueError as e:
+        data_adapted = data.copy()
+        logging.debug("CORAL ERROR :::")
+        logging.debug(str(e))
+    
+    #caso utilizar antes da selecao
+    # data_.iloc[:,:-2]
+    
+    # selecao naive
+    Y_naive = data_naive.pop('is_match').values
+    y_s1b = data.pop('is_match')
+    y_s1r = data_adapted.pop('is_match') # tl-pprl++
+    coral_y = source_.copy()
+    y_coral = coral_y.pop('is_match').values #coral
+    del coral_y
+
+    #treinando classificador no target
+    model_base  = LogisticRegression(random_state=10100,n_jobs=-1)
+    model_s1b   = LogisticRegression(random_state=10100,n_jobs=-1)
+    model_w_s1b = LogisticRegression(random_state=10100,n_jobs=-1)
+    model_s1r   = LogisticRegression(random_state=10100,n_jobs=-1)
+    model_coral = LogisticRegression(random_state=10100,n_jobs=-1)
+
+    if stage1_model == 'Logistic':
+        model_base  = LogisticRegression(random_state=10100,n_jobs=-1)
+        model_s1b   = LogisticRegression(random_state=10100,n_jobs=-1)
+        model_w_s1b = LogisticRegression(random_state=10100,n_jobs=-1)
+        model_s1r   = LogisticRegression(random_state=10100,n_jobs=-1)
+        model_coral = LogisticRegression(random_state=10100,n_jobs=-1)
+    if stage1_model == 'SVM':
+        svc = LinearSVC(random_state=10100)
+        model_base  = CalibratedClassifierCV(base_estimator=svc, cv=2)
+        model_s1b   = CalibratedClassifierCV(base_estimator=svc, cv=2)
+        model_w_s1b = CalibratedClassifierCV(base_estimator=svc, cv=2)
+        model_s1r   = CalibratedClassifierCV(base_estimator=svc, cv=2)
+        model_coral = CalibratedClassifierCV(base_estimator=svc, cv=2)
+    if stage1_model == 'DT':
+        model_base  = RandomForestClassifier(n_estimators=10,random_state=101010,n_jobs=-1)
+        model_s1b   = RandomForestClassifier(n_estimators=10,random_state=101010,n_jobs=-1)
+        model_w_s1b = RandomForestClassifier(n_estimators=10,random_state=101010,n_jobs=-1)
+        model_s1r   = RandomForestClassifier(n_estimators=10,random_state=101010,n_jobs=-1)
+        model_coral = RandomForestClassifier(n_estimators=10,random_state=101010,n_jobs=-1)
+    if lr_model_name == 'GBC':
+        model_base  = GradientBoostingClassifier(random_state=101010,loss="exponential")
+        model_s1b   = GradientBoostingClassifier(random_state=101010,loss="exponential")
+        model_w_s1b = GradientBoostingClassifier(random_state=101010,loss="exponential")
+        model_s1r   = GradientBoostingClassifier(random_state=101010,loss="exponential")
+        model_coral = GradientBoostingClassifier(random_state=101010,loss="exponential")
+    
+
+    model_base.fit(data_naive,Y_naive.astype('int'))
+    model_coral.fit(data_coral,y_coral.astype('int'))
+    
+    start_time = time.time()
+    model_s1b.fit(data,y_s1b.astype('int'))
+    model_s1r.fit(data_adapted,y_s1r.astype('int')) # ajustado
+    train_classifier_time = time.time() - start_time
+    
+
+    ######################################
+    ### Classificando
+    ######################################
+    alvo = atributos + columns_y
+
+    t_ = target_.iloc[:,alvo]
+    Y_t = t_.pop('is_match').values
+
+    Y_naive = modelo.predict(t_) # modelo totalmente treinado no source
+    Y_base = model_base.predict(t_)
+    Y_coral = model_coral.predict(t_)
+    
+    start_time = time.time()
+    Y_topk = model_s1b.predict(t_)
+    execute_classifier_time = time.time() - start_time
+    
+    Y_topk_adpt = model_s1r.predict(t_)
+    
+    topk_adpt_log = generate_logs_s1(Y_t, Y_topk_adpt,'tl_pprl++','top_k_adpt',lr_model_name,stage1_model)
+    naive_log = generate_logs_s1(Y_t, Y_naive,'naive','all',lr_model_name,stage1_model)
+    base_log = generate_logs_s1(Y_t, Y_base,'tl-base','all',lr_model_name,stage1_model)
+    topk_log = generate_logs_s1(Y_t, Y_topk,'tl_pprl','top_k',lr_model_name,stage1_model)
+    coral_log = generate_logs_s1(Y_t, Y_coral,'coral','all',lr_model_name,stage1_model)
+    
+    
+
+    logs = [naive_log,base_log,topk_log,topk_adpt_log,coral_log]
+
+    # passando funcao com peso para o modelo
+    # TODO: Colocar no log a funcao
+    if funcao_w == None:
+        model_w_s1b.fit(data,y_s1b.astype('int'),sample_weight=w)
+        Y_topkw = model_w_s1b.predict(t_)
+        topkw_log = generate_logs_s1(Y_t, Y_topkw,'tl_pprl-w','top_k',lr_model_name,stage1_model)
+    else:
+        for fx in funcao_w:
+            w_linha = fx(w)
+            model_w_s1b.fit(data,y_s1b.astype('int'),sample_weight=w_linha)
+
+            try:
+                fw = fx.__name__
+            except AttributeError:
+                fw = 'naosei'
+
+            Y_topkw = model_w_s1b.predict(t_)
+#             print("\t" + lr_model_name)
+            topkw_log = generate_logs_s1(Y_t, Y_topkw,'tl_pprl-w','top_k',lr_model_name,stage1_model,peso=fw)
+            logs.append(topkw_log)
+
+    # nesses dados estao faltando o adptados
+    _dnaive = target_.copy()
+    _dbase = target_.copy()
+    _dtopk = target_.copy()
+    _dtopkw = target_.copy() # pega so o ultimo kw
+
+    _dnaive['y'] = Y_naive
+    _dbase['y']  = Y_base
+    _dtopk['y']  = Y_topk
+    _dtopkw['y'] = Y_topkw
+    #nao retornando o Y do tl-pprl++ e coral
+
+    data = [_dnaive,_dbase,_dtopk,_dtopkw]
+    
+    time_log = {'sep_model_training':sep_model_time,
+#                 'exec_sep_model' : execute_classifier_time,
+                'sep_model_execution':select_train_data_time,
+                'instance_adptation':adjust_train_data_time,
+                'train_classifier':train_classifier_time,
+                'execute_classifier':execute_classifier_time}
+    
+    return data, logs, time_log#, data_ # colocado o data

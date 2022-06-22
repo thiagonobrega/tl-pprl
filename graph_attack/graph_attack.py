@@ -75,8 +75,7 @@ MAX_DRAW_PLOT_NODE_NUM = 200
 # logging.info('We processed %d records', 3)
 
 def load_data_set(data_set_name, attr_num_list, ent_id_col, soundex_attr_val_list,
-                  num_rec=-1, col_sep_char=',', header_line_flag=False,
-                ):
+                  num_rec=-1, col_sep_char=',', header_line_flag=False,unique_flag=False):
   """Load a data set and extract required attributes.
 
      It is assumed that the file to be loaded is a comma separated values file.
@@ -102,6 +101,7 @@ def load_data_set(data_set_name, attr_num_list, ent_id_col, soundex_attr_val_lis
                             where values are lists of attribute values.
        - attr_name_list     The list of the attributes to be used.
        - num_rec_loaded     The actual number of records loaded.
+       - unique_flag        Select unique values of atributes
   """
 
   rec_attr_val_dict = {}  # The dictionary of attribute value lists to be 
@@ -144,6 +144,9 @@ def load_data_set(data_set_name, attr_num_list, ent_id_col, soundex_attr_val_lis
   #
   rec_num = 0 
 
+  # utilizado para selecionar valores unicos
+  auxiliary_unique_rec_val = {}
+
   for rec_val_list in csv_reader:
 
     if (num_rec > 0) and (rec_num >= num_rec):
@@ -168,11 +171,21 @@ def load_data_set(data_set_name, attr_num_list, ent_id_col, soundex_attr_val_lis
 #      else:
 #        use_rec_val_list.append('')  # Not needed
 
+    
+    
     # Don't use completely empty list of values
     #
     if (len(''.join(use_rec_val_list)) > 0):
-      rec_attr_val_dict[ent_id] = use_rec_val_list
-      rec_soundex_attr_val_dict[ent_id] = soundex_val_list
+      if unique_flag:
+        try: 
+          auxiliary_unique_rec_val[str(use_rec_val_list)]
+        except KeyError:
+          auxiliary_unique_rec_val[str(use_rec_val_list)] = ent_id
+          rec_attr_val_dict[ent_id] = use_rec_val_list
+          rec_soundex_attr_val_dict[ent_id] = soundex_val_list
+      else:
+        rec_attr_val_dict[ent_id] = use_rec_val_list
+        rec_soundex_attr_val_dict[ent_id] = soundex_val_list
 
   in_f.close()
 
@@ -1589,7 +1602,7 @@ def genG(plain_num_ent,encode_num_ent,
     regre_file_name = regre_file_str + '.sav'
     regre_file_name = graph_path + regre_file_name
     if (os.path.isfile(regre_file_name)):
-        logging.debug('Load regression model from saved file:', regre_file_name)
+        logging.debug('Load regression model from saved file:' + str(regre_file_name))
         logging.debug('')
         regre_model = pickle.load(open(regre_file_name, 'rb'))
     
@@ -1671,7 +1684,7 @@ def genG(plain_num_ent,encode_num_ent,
               write_reg_file = open(regre_model_eval_res_file, 'w')
               csv_writer = csv.writer(write_reg_file)
               csv_writer.writerow(res_header_list)
-              logging.debug('Created new result file:', regre_model_eval_res_file)
+              logging.debug('Created new result file:' +  str(regre_model_eval_res_file))
        
             else:  # Append results to an existing file
               write_reg_file = open(regre_model_eval_res_file, 'a')
@@ -1913,7 +1926,7 @@ def genG(plain_num_ent,encode_num_ent,
           csv_writer = csv.writer(write_blck_file)
           csv_writer.writerow(blck_res_header_list)
           
-          logging.debug('Created new result file:', blocking_alignment_res_file)
+          logging.debug('Created new result file:' +  str(blocking_alignment_res_file) )
           
         else:  # Append results to an existing file
           write_blck_file = open(blocking_alignment_res_file, 'a')
@@ -2203,8 +2216,8 @@ def genG(plain_num_ent,encode_num_ent,
                     encode_graph_num_node, qg_graph_gen_time, ba_graph_gen_time, \
                     qg_graph_num_edges, ba_graph_num_edges, \
                     qg_graph_num_singleton, ba_graph_num_singleton)
-      logging.debug('######## load:', header_line)
-      logging.debug('######## load:', result_line)
+      logging.debug('######## load:' + str(header_line) )
+      logging.debug('######## load:' + str(result_line) )
       logging.debug('########')
 
 
@@ -2461,8 +2474,10 @@ def calc_plot_histogram_feat_vec_cosine_sim(sim_graph1, sim_graph2,
     # Only use if the node has a non-empty original value
     #
     if (len(org_val) > 0):
-      assert org_val not in sim_graph_node_dict1, org_val
-      sim_graph_node_dict1[org_val] = node_key_val
+      #ALTERADO SEM TESTE
+      # assert org_val not in sim_graph_node_dict1, org_val
+      if (org_val not in sim_graph_node_dict1):
+        sim_graph_node_dict1[org_val] = node_key_val
 
   for node_key_val in sim_graph2.nodes():
     org_val = ' '.join(sorted(sim_graph2.node[node_key_val]['org_val_set'])[0])
@@ -2470,8 +2485,9 @@ def calc_plot_histogram_feat_vec_cosine_sim(sim_graph1, sim_graph2,
     # Only use if the node has a non-empty original value
     #
     if (len(org_val) > 0):
-      assert org_val not in sim_graph_node_dict2, org_val
-      sim_graph_node_dict2[org_val] = node_key_val
+      # assert org_val not in sim_graph_node_dict2, org_val
+      if (org_val not in sim_graph_node_dict2):
+        sim_graph_node_dict2[org_val] = node_key_val
 
   # Now get true matching original values across the two graphs
   #
@@ -4174,14 +4190,14 @@ def step04(QG_sim_graph,BA_sim_graph,
                               str(sorted(org_val_set2))
                         )
                         logging.debug('      Original feature vectors:')
-                        logging.debug('       ', str(qg_feat_dict[node_key_val1]) )
-                        logging.debug('       ', str( ba_feat_dict[node_key_val2]) )
+                        logging.debug('       ' + str(qg_feat_dict[node_key_val1]) )
+                        logging.debug('       ' +  str( ba_feat_dict[node_key_val2]) )
                         logging.debug('      Original normalised feature vectors:')
-                        logging.debug('       ', str( norm_qg_feat_dict[node_key_val1]) )
-                        logging.debug('       ', str( norm_ba_feat_dict[node_key_val2]) )
+                        logging.debug('       ' + str( norm_qg_feat_dict[node_key_val1]) )
+                        logging.debug('       ' + str( norm_ba_feat_dict[node_key_val2]) )
                         logging.debug('      Selected feature vectors:')
-                        logging.debug('       ', str( sel_qg_feat_dict[node_key_val1]) )
-                        logging.debug('       ', str( sel_ba_feat_dict[node_key_val2]) )
+                        logging.debug('       ' + str( sel_qg_feat_dict[node_key_val1]) )
+                        logging.debug('       ' + str( sel_ba_feat_dict[node_key_val2]) )
                         logging.debug('')
       
                       # Get the first identifiers from these two sets
@@ -4234,10 +4250,9 @@ def step04(QG_sim_graph,BA_sim_graph,
                     logging.info('  Number of encode records identified wrongly: %d' %len(ident_wrng_id_set))
                     logging.info('')
                     
-                    logging.debug('  Ranks of %d true matches:' % \
-                          (len(true_match_rank_list)), true_match_rank_list[:10], \
-                          '...', true_match_rank_list[-10:]
-                    )
+                    logging.debug('  Ranks of %d true matches:' % (len(true_match_rank_list)) )
+                    logging.debug( str(true_match_rank_list[:10]) )
+                    logging.debug( str(true_match_rank_list[-10:]) )
                     logging.debug('')
       
                     logging.debug('  Matching accuracy (based on true matches):')
